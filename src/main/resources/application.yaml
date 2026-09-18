@@ -1,6 +1,8 @@
 spring:
   application:
     name: confort-travel-backend
+  profiles:
+    active: dev
 
 server:
   port: 8080
