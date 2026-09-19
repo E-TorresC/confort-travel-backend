@@ -9,6 +9,7 @@ import com.conforttravel.api.usuario.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,7 +44,7 @@ public class AuthServiceImpl implements AuthService {
                         .withUsername(usuario.getEmail())
                         .password(usuario.getPasswordHash())
                         .authorities(
-                                "ROLE_" + usuario.getRol().name()
+                                new SimpleGrantedAuthority("ROLE_" + usuario.getRol().name())
                         )
                         .build()
         );

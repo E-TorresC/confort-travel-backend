@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.security.access.AccessDeniedException;
 
 import java.time.OffsetDateTime;
 import java.util.stream.Collectors;
@@ -102,6 +103,19 @@ public class GlobalExceptionHandler {
                 HttpStatus.CONFLICT,
                 "DATA_INTEGRITY_ERROR",
                 "La operación no puede completarse porque viola una restricción de datos",
+                request.getRequestURI()
+        );
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ApiErrorResponse> handleAccessDenied(
+            AccessDeniedException exception,
+            HttpServletRequest request
+    ) {
+        return buildResponse(
+                HttpStatus.FORBIDDEN,
+                "FORBIDDEN",
+                "No tienes permisos suficientes para acceder a este recurso",
                 request.getRequestURI()
         );
     }

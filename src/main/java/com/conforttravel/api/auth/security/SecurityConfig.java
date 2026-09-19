@@ -22,6 +22,8 @@ public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final CustomUserDetailsService userDetailsService;
+    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+    private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
 
     @Bean
     public SecurityFilterChain securityFilterChain(
@@ -56,7 +58,19 @@ public class SecurityConfig {
                         .authenticated()
                 )
 
-                .authenticationProvider(authenticationProvider())
+                .exceptionHandling(exception ->
+                        exception
+                                .authenticationEntryPoint(
+                                        jwtAuthenticationEntryPoint
+                                )
+                                .accessDeniedHandler(
+                                        jwtAccessDeniedHandler
+                                )
+                )
+
+                .authenticationProvider(
+                        authenticationProvider()
+                )
 
                 .addFilterBefore(
                         jwtAuthenticationFilter,
@@ -70,9 +84,13 @@ public class SecurityConfig {
     public AuthenticationProvider authenticationProvider() {
 
         DaoAuthenticationProvider provider =
-                new DaoAuthenticationProvider(userDetailsService);
+                new DaoAuthenticationProvider(
+                        userDetailsService
+                );
 
-        provider.setPasswordEncoder(passwordEncoder());
+        provider.setPasswordEncoder(
+                passwordEncoder()
+        );
 
         return provider;
     }

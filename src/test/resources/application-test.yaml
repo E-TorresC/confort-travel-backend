@@ -11,3 +11,8 @@ spring:
     open-in-view: false
 server:
   port: 0
+
+security:
+  jwt:
+    secret: tu-clave-secreta-super-segura-de-al-menos-32-caracteres
+    expiration: 86400000

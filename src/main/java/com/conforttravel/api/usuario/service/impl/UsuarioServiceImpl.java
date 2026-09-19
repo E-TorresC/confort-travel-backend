@@ -73,11 +73,9 @@ public class UsuarioServiceImpl implements UsuarioService {
             usuario.setActivo(request.activo());
         }
 
-        /*
-         * La actualización segura de la contraseña se completará
-         * al integrar PasswordEncoder en la fase de seguridad.
-         */
-        usuario.setPasswordHash(request.password());
+        usuario.setPasswordHash(
+                passwordEncoder.encode(request.password())
+        );
 
         Usuario actualizado = usuarioRepository.save(usuario);
 
