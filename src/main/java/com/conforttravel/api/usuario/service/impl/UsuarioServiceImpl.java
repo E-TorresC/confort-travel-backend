@@ -8,6 +8,7 @@ import com.conforttravel.api.usuario.mapper.UsuarioMapper;
 import com.conforttravel.api.usuario.repository.UsuarioRepository;
 import com.conforttravel.api.usuario.service.UsuarioService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +21,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
     private final UsuarioMapper usuarioMapper;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     @Transactional
@@ -30,7 +32,7 @@ public class UsuarioServiceImpl implements UsuarioService {
          * La gestión de passwordHash se completará junto con
          * la configuración de seguridad/autenticación.
          */
-        usuario.setPasswordHash(request.password());
+        usuario.setPasswordHash(passwordEncoder.encode(request.password()));
 
         if (usuario.getActivo() == null) {
             usuario.setActivo(true);
