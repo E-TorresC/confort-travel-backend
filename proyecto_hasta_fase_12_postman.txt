@@ -1,7 +1,7 @@
 ﻿============================================================
  PROYECTO : Confort Travel Backend
  RAÍZ     : E:\PROYECTOS_FULLSTACK\confort_travel\confort-travel-backend\src
- GENERADO : 2026-09-18 18:05:13
+ GENERADO : 2026-09-18 21:24:44
 ============================================================
 
 ===== ESTRUCTURA DE CARPETAS (src) =====
@@ -3429,32 +3429,44 @@ public record VentaRequest(
         LocalDateTime fechaCompra,
 
         @NotNull(message = "El precio inicial es obligatorio")
-        @DecimalMin(value = "0.00", message = "El precio inicial no puede ser negativo")
+        @DecimalMin(
+                value = "0.00",
+                message = "El precio inicial no puede ser negativo"
+        )
         BigDecimal precioInicial,
 
         @NotNull(message = "El precio final es obligatorio")
-        @DecimalMin(value = "0.00", message = "El precio final no puede ser negativo")
+        @DecimalMin(
+                value = "0.00",
+                message = "El precio final no puede ser negativo"
+        )
         BigDecimal precioFinal,
 
-        @Size(max = 1000, message = "Las observaciones no pueden superar los 1000 caracteres")
+        @Size(
+                max = 1000,
+                message = "Las observaciones no pueden superar los 1000 caracteres"
+        )
         String observaciones,
 
         @NotNull(message = "La cantidad de adultos es obligatoria")
-        @Min(value = 0, message = "La cantidad de adultos no puede ser negativa")
+        @Min(
+                value = 0,
+                message = "La cantidad de adultos no puede ser negativa"
+        )
         Integer adultos,
 
         @NotNull(message = "La cantidad de infantes es obligatoria")
-        @Min(value = 0, message = "La cantidad de infantes no puede ser negativa")
+        @Min(
+                value = 0,
+                message = "La cantidad de infantes no puede ser negativa"
+        )
         Integer infantes,
 
         @NotNull(message = "El cliente es obligatorio")
         Long clienteId,
 
         @NotNull(message = "El agente es obligatorio")
-        Long agenteId,
-
-        @NotNull(message = "El viaje es obligatorio")
-        Long viajeId
+        Long agenteId
 ) {
 }
 
@@ -3821,8 +3833,6 @@ import com.conforttravel.api.venta.entity.Venta;
 import com.conforttravel.api.venta.mapper.VentaMapper;
 import com.conforttravel.api.venta.repository.VentaRepository;
 import com.conforttravel.api.venta.service.VentaService;
-import com.conforttravel.api.viaje.entity.Viaje;
-import com.conforttravel.api.viaje.repository.ViajeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -3838,7 +3848,6 @@ public class VentaServiceImpl implements VentaService {
     private final VentaRepository ventaRepository;
     private final ClienteRepository clienteRepository;
     private final UsuarioRepository usuarioRepository;
-    private final ViajeRepository viajeRepository;
     private final VentaMapper ventaMapper;
 
     @Override
@@ -3848,13 +3857,11 @@ public class VentaServiceImpl implements VentaService {
 
         Cliente cliente = obtenerCliente(request.clienteId());
         Usuario agente = obtenerAgente(request.agenteId());
-        Viaje viaje = obtenerViaje(request.viajeId());
 
         Venta venta = ventaMapper.toEntity(request);
 
         venta.setCliente(cliente);
         venta.setAgente(agente);
-        venta.setViaje(viaje);
 
         Venta guardada = ventaRepository.save(venta);
 
@@ -3886,7 +3893,6 @@ public class VentaServiceImpl implements VentaService {
 
         Cliente cliente = obtenerCliente(request.clienteId());
         Usuario agente = obtenerAgente(request.agenteId());
-        Viaje viaje = obtenerViaje(request.viajeId());
 
         venta.setFechaCompra(request.fechaCompra());
         venta.setPrecioInicial(request.precioInicial());
@@ -3896,7 +3902,6 @@ public class VentaServiceImpl implements VentaService {
         venta.setInfantes(request.infantes());
         venta.setCliente(cliente);
         venta.setAgente(agente);
-        venta.setViaje(viaje);
 
         Venta actualizada = ventaRepository.save(venta);
 
@@ -3934,15 +3939,6 @@ public class VentaServiceImpl implements VentaService {
                 .orElseThrow(() ->
                         new ResourceNotFoundException(
                                 "Usuario agente no encontrado con id: " + id
-                        )
-                );
-    }
-
-    private Viaje obtenerViaje(Long id) {
-        return viajeRepository.findById(id)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException(
-                                "Viaje no encontrado con id: " + id
                         )
                 );
     }
@@ -4319,6 +4315,8 @@ import com.conforttravel.api.viaje.entity.Viaje;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ViajeRepository extends JpaRepository<Viaje, Long> {
+
+    boolean existsByVentaId(Long ventaId);
 }
 
 
@@ -4327,6 +4325,7 @@ public interface ViajeRepository extends JpaRepository<Viaje, Long> {
 ============================================================
 package com.conforttravel.api.viaje.service.impl;
 
+import com.conforttravel.api.shared.exception.ConflictException;
 import com.conforttravel.api.shared.exception.ResourceNotFoundException;
 import com.conforttravel.api.venta.entity.Venta;
 import com.conforttravel.api.venta.repository.VentaRepository;
@@ -4354,12 +4353,22 @@ public class ViajeServiceImpl implements ViajeService {
     @Override
     @Transactional
     public ViajeResponse crear(ViajeRequest request) {
+
         Venta venta = ventaRepository.findById(request.ventaId())
                 .orElseThrow(() ->
                         new ResourceNotFoundException(
-                                "Venta no encontrada con id: " + request.ventaId()
+                                "Venta no encontrada con id: "
+                                        + request.ventaId()
                         )
                 );
+
+        if (viajeRepository.existsByVentaId(request.ventaId())) {
+            throw new ConflictException(
+                    "La venta con id "
+                            + request.ventaId()
+                            + " ya tiene un viaje asociado"
+            );
+        }
 
         Viaje viaje = viajeMapper.toEntity(request);
         viaje.setVenta(venta);

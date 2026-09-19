@@ -12,8 +12,6 @@ import com.conforttravel.api.venta.entity.Venta;
 import com.conforttravel.api.venta.mapper.VentaMapper;
 import com.conforttravel.api.venta.repository.VentaRepository;
 import com.conforttravel.api.venta.service.VentaService;
-import com.conforttravel.api.viaje.entity.Viaje;
-import com.conforttravel.api.viaje.repository.ViajeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,7 +27,6 @@ public class VentaServiceImpl implements VentaService {
     private final VentaRepository ventaRepository;
     private final ClienteRepository clienteRepository;
     private final UsuarioRepository usuarioRepository;
-    private final ViajeRepository viajeRepository;
     private final VentaMapper ventaMapper;
 
     @Override
@@ -39,13 +36,11 @@ public class VentaServiceImpl implements VentaService {
 
         Cliente cliente = obtenerCliente(request.clienteId());
         Usuario agente = obtenerAgente(request.agenteId());
-        Viaje viaje = obtenerViaje(request.viajeId());
 
         Venta venta = ventaMapper.toEntity(request);
 
         venta.setCliente(cliente);
         venta.setAgente(agente);
-        venta.setViaje(viaje);
 
         Venta guardada = ventaRepository.save(venta);
 
@@ -77,7 +72,6 @@ public class VentaServiceImpl implements VentaService {
 
         Cliente cliente = obtenerCliente(request.clienteId());
         Usuario agente = obtenerAgente(request.agenteId());
-        Viaje viaje = obtenerViaje(request.viajeId());
 
         venta.setFechaCompra(request.fechaCompra());
         venta.setPrecioInicial(request.precioInicial());
@@ -87,7 +81,6 @@ public class VentaServiceImpl implements VentaService {
         venta.setInfantes(request.infantes());
         venta.setCliente(cliente);
         venta.setAgente(agente);
-        venta.setViaje(viaje);
 
         Venta actualizada = ventaRepository.save(venta);
 
@@ -125,15 +118,6 @@ public class VentaServiceImpl implements VentaService {
                 .orElseThrow(() ->
                         new ResourceNotFoundException(
                                 "Usuario agente no encontrado con id: " + id
-                        )
-                );
-    }
-
-    private Viaje obtenerViaje(Long id) {
-        return viajeRepository.findById(id)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException(
-                                "Viaje no encontrado con id: " + id
                         )
                 );
     }

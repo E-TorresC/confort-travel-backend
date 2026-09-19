@@ -1,5 +1,6 @@
 package com.conforttravel.api.viaje.service.impl;
 
+import com.conforttravel.api.shared.exception.ConflictException;
 import com.conforttravel.api.shared.exception.ResourceNotFoundException;
 import com.conforttravel.api.venta.entity.Venta;
 import com.conforttravel.api.venta.repository.VentaRepository;
@@ -27,12 +28,22 @@ public class ViajeServiceImpl implements ViajeService {
     @Override
     @Transactional
     public ViajeResponse crear(ViajeRequest request) {
+
         Venta venta = ventaRepository.findById(request.ventaId())
                 .orElseThrow(() ->
                         new ResourceNotFoundException(
-                                "Venta no encontrada con id: " + request.ventaId()
+                                "Venta no encontrada con id: "
+                                        + request.ventaId()
                         )
                 );
+
+        if (viajeRepository.existsByVentaId(request.ventaId())) {
+            throw new ConflictException(
+                    "La venta con id "
+                            + request.ventaId()
+                            + " ya tiene un viaje asociado"
+            );
+        }
 
         Viaje viaje = viajeMapper.toEntity(request);
         viaje.setVenta(venta);
