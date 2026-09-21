@@ -6,13 +6,17 @@ import com.conforttravel.api.shared.exception.BusinessException;
 import com.conforttravel.api.shared.exception.ResourceNotFoundException;
 import com.conforttravel.api.usuario.entity.Usuario;
 import com.conforttravel.api.usuario.repository.UsuarioRepository;
+import com.conforttravel.api.venta.dto.VentaFilterRequest;
 import com.conforttravel.api.venta.dto.VentaRequest;
 import com.conforttravel.api.venta.dto.VentaResponse;
 import com.conforttravel.api.venta.entity.Venta;
 import com.conforttravel.api.venta.mapper.VentaMapper;
 import com.conforttravel.api.venta.repository.VentaRepository;
 import com.conforttravel.api.venta.service.VentaService;
+import com.conforttravel.api.venta.specification.VentaSpecificationBuilder;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +32,7 @@ public class VentaServiceImpl implements VentaService {
     private final ClienteRepository clienteRepository;
     private final UsuarioRepository usuarioRepository;
     private final VentaMapper ventaMapper;
+    private final VentaSpecificationBuilder ventaSpecificationBuilder;
 
     @Override
     @Transactional
@@ -93,6 +98,16 @@ public class VentaServiceImpl implements VentaService {
         Venta venta = obtenerEntidad(id);
 
         ventaRepository.delete(venta);
+    }
+
+    @Override
+    public Page<VentaResponse> buscar(VentaFilterRequest filter, Pageable pageable) {
+        return ventaRepository
+                .findAll(
+                        ventaSpecificationBuilder.build(filter),
+                        pageable
+                )
+                .map(ventaMapper::toResponseDto);
     }
 
     private Venta obtenerEntidad(Long id) {

@@ -1,10 +1,15 @@
 package com.conforttravel.api.cliente.controller;
 
+import com.conforttravel.api.cliente.dto.ClienteFilterRequest;
 import com.conforttravel.api.cliente.dto.ClienteRequest;
 import com.conforttravel.api.cliente.dto.ClienteResponse;
 import com.conforttravel.api.cliente.service.ClienteService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -57,5 +62,46 @@ public class ClienteController {
     ) {
         clienteService.eliminar(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/buscar")
+    public ResponseEntity<Page<ClienteResponse>> buscar(
+
+            @RequestParam(required = false) String nombres,
+
+            @RequestParam(required = false) String apellidos,
+
+            @RequestParam(required = false) String telefono,
+
+            @RequestParam(defaultValue = "0") int page,
+
+            @RequestParam(defaultValue = "10") int size,
+
+            @RequestParam(defaultValue = "id") String sortBy,
+
+            @RequestParam(defaultValue = "desc") String direction
+
+    ) {
+
+        Sort sort = direction.equalsIgnoreCase("asc")
+                ? Sort.by(sortBy).ascending()
+                : Sort.by(sortBy).descending();
+
+        Pageable pageable = PageRequest.of(
+                page,
+                size,
+                sort
+        );
+
+        ClienteFilterRequest filter =
+                new ClienteFilterRequest(
+                        nombres,
+                        apellidos,
+                        telefono
+                );
+
+        return ResponseEntity.ok(
+                clienteService.buscar(filter, pageable)
+        );
     }
 }

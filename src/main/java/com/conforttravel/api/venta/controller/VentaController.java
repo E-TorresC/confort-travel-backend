@@ -1,14 +1,22 @@
 package com.conforttravel.api.venta.controller;
 
+import com.conforttravel.api.venta.dto.VentaFilterRequest;
 import com.conforttravel.api.venta.dto.VentaRequest;
 import com.conforttravel.api.venta.dto.VentaResponse;
 import com.conforttravel.api.venta.service.VentaService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -57,5 +65,67 @@ public class VentaController {
     ) {
         ventaService.eliminar(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/buscar")
+    public ResponseEntity<Page<VentaResponse>> buscar(
+
+            @RequestParam(required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+            LocalDateTime fechaDesde,
+
+            @RequestParam(required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+            LocalDateTime fechaHasta,
+
+            @RequestParam(required = false)
+            BigDecimal precioMinimo,
+
+            @RequestParam(required = false)
+            BigDecimal precioMaximo,
+
+            @RequestParam(required = false)
+            Long clienteId,
+
+            @RequestParam(required = false)
+            Long agenteId,
+
+            @RequestParam(defaultValue = "0")
+            int page,
+
+            @RequestParam(defaultValue = "10")
+            int size,
+
+            @RequestParam(defaultValue = "fechaCompra")
+            String sortBy,
+
+            @RequestParam(defaultValue = "desc")
+            String direction
+
+    ) {
+
+        Sort sort = direction.equalsIgnoreCase("asc")
+                ? Sort.by(sortBy).ascending()
+                : Sort.by(sortBy).descending();
+
+        Pageable pageable = PageRequest.of(
+                page,
+                size,
+                sort
+        );
+
+        VentaFilterRequest filter =
+                new VentaFilterRequest(
+                        fechaDesde,
+                        fechaHasta,
+                        precioMinimo,
+                        precioMaximo,
+                        clienteId,
+                        agenteId
+                );
+
+        return ResponseEntity.ok(
+                ventaService.buscar(filter, pageable)
+        );
     }
 }

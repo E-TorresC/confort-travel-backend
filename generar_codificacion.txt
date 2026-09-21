@@ -1,195 +1,132 @@
 # Script: Generar árbol + contenido de archivos del proyecto
-# Ubicación sugerida: E:\PROYECTOS_FULLSTACK\confort_travel\confort-travel-backend
+# Salida: codigo_hasta_fase_13.txt
 
 $rootPath = "E:\PROYECTOS_FULLSTACK\confort_travel\confort-travel-backend"
-$outputFile = Join-Path $rootPath "codificacion_proyecto.txt"
+$outputFile = Join-Path $rootPath "codigo_hasta_fase_13.txt"
 
-# Asegurar que estamos en la raíz del proyecto
-Set-Location $rootPath
+# Extensiones/archivos a incluir
+$includePatterns = @("*.java", "*.xml", "*.yml", "*.yaml", "*.properties", "*.sql", "*.json")
 
-# Eliminar archivo previo si existe
-if (Test-Path $outputFile) {
-    Remove-Item $outputFile -Force
-}
+# Carpetas a excluir
+$excludeDirs = @("target", ".git", ".idea", ".mvn", "node_modules", ".settings", "bin")
 
-# Función para escribir en el archivo con encoding UTF8
 function Write-Line {
-    param([string]$text)
+    param([string]$text = "")
     Add-Content -Path $outputFile -Value $text -Encoding UTF8
 }
 
-# Encabezado
-Write-Line "================================================================"
-Write-Line "  CODIFICACIÓN DEL PROYECTO - CONFORT TRAVEL BACKEND"
-Write-Line "  Fecha de generación: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')"
-Write-Line "  Ruta raíz: $rootPath"
-Write-Line "================================================================"
+# Limpiar archivo previo
+if (Test-Path $outputFile) { Remove-Item $outputFile -Force }
+New-Item -Path $outputFile -ItemType File -Force | Out-Null
+
+Write-Line "======================================================================"
+Write-Line "   PROYECTO: CONFORT TRAVEL BACKEND - CODIGO HASTA FASE 13"
+Write-Line "   Generado: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')"
+Write-Line "   Ruta: $rootPath"
+Write-Line "======================================================================"
 Write-Line ""
 
-# ============================================================
-# 1) ÁRBOL DE DIRECTORIOS (excluyendo carpetas no relevantes)
-# ============================================================
-Write-Line "================================================================"
-Write-Line "  ÁRBOL DE DIRECTORIOS DEL PROYECTO"
-Write-Line "================================================================"
+# ============ 1) ÁRBOL DE DIRECTORIOS ============
+Write-Line "======================================================================"
+Write-Line "   ESTRUCTURA DE DIRECTORIOS (ARBOL)"
+Write-Line "======================================================================"
 Write-Line ""
-
-$excludeDirs = @('target', '.git', '.idea', '.mvn', 'node_modules', '.settings', 'bin')
 
 function Show-Tree {
     param(
         [string]$Path,
-        [string]$Indent = ""
+        [string]$Prefix = ""
     )
-
     $items = Get-ChildItem -Path $Path -Force | Where-Object {
-        $_.Name -notin @('.git', '.idea', '.mvn', '.settings', 'target', 'bin', 'node_modules')
-    } | Sort-Object @{Expression={$_.PSIsContainer}; Descending=$true}, Name
+        $excludeDirs -notcontains $_.Name -and $_.Name -notlike "*.iml"
+    } | Sort-Object @{Expression={$_.PSIsContainer};Descending=$true}, Name
 
-    $count = $items.Count
-    $i = 0
-
-    foreach ($item in $items) {
-        $i++
-        $isLast = ($i -eq $count)
+    for ($i = 0; $i -lt $items.Count; $i++) {
+        $item = $items[$i]
+        $isLast = ($i -eq $items.Count - 1)
         $connector = if ($isLast) { "└── " } else { "├── " }
-        $newIndent = if ($isLast) { "$Indent    " } else { "$Indent│   " }
+        $newPrefix = $Prefix + $(if ($isLast) { "    " } else { "│   " })
+
+        Write-Line "$Prefix$connector$($item.Name)"
 
         if ($item.PSIsContainer) {
-            Write-Line "$Indent$connector$($item.Name)/"
-            Show-Tree -Path $item.FullName -Indent $newIndent
-        } else {
-            $size = [math]::Round($item.Length / 1KB, 2)
-            Write-Line "$Indent$connector$($item.Name)  ($size KB)"
+            Show-Tree -Path $item.FullName -Prefix $newPrefix
         }
     }
 }
 
-Write-Line "$(Split-Path $rootPath -Leaf)/"
+Write-Line (Split-Path $rootPath -Leaf)
 Show-Tree -Path $rootPath
 Write-Line ""
 
-# ============================================================
-# 2) CONTENIDO DEL pom.xml
-# ============================================================
-Write-Line ""
-Write-Line "================================================================"
-Write-Line "  CONTENIDO DE pom.xml"
-Write-Line "================================================================"
+# ============ 2) CONTENIDO DE ARCHIVOS ============
+Write-Line "======================================================================"
+Write-Line "   CONTENIDO DE ARCHIVOS"
+Write-Line "======================================================================"
 Write-Line ""
 
-$pomFile = Join-Path $rootPath "pom.xml"
-if (Test-Path $pomFile) {
-    Write-Line "--- ARCHIVO: pom.xml ---"
-    Write-Line ""
-    Get-Content $pomFile -Encoding UTF8 | ForEach-Object { Write-Line $_ }
-    Write-Line ""
-} else {
-    Write-Line "[ADVERTENCIA] No se encontró pom.xml en la raíz del proyecto."
-}
-
-# ============================================================
-# 3) CONTENIDO DE TODOS LOS ARCHIVOS .java EN src
-# ============================================================
-Write-Line ""
-Write-Line "================================================================"
-Write-Line "  CONTENIDO DE ARCHIVOS .java (carpeta src)"
-Write-Line "================================================================"
-Write-Line ""
-
-$srcPath = Join-Path $rootPath "src"
-
-if (Test-Path $srcPath) {
-    $javaFiles = Get-ChildItem -Path $srcPath -Recurse -Filter "*.java" -File |
-                 Where-Object { $_.FullName -notmatch '\\target\\' } |
-                 Sort-Object FullName
-
-    Write-Line "Total de archivos .java encontrados: $($javaFiles.Count)"
-    Write-Line ""
-
-    $index = 0
-    foreach ($file in $javaFiles) {
-        $index++
-        $relativePath = $file.FullName.Replace($rootPath, "").TrimStart("\")
-
-        Write-Line "================================================================"
-        Write-Line "  [$index/$($javaFiles.Count)] ARCHIVO: $relativePath"
-        Write-Line "================================================================"
-        Write-Line ""
-
-        try {
-            Get-Content $file.FullName -Encoding UTF8 | ForEach-Object { Write-Line $_ }
-        } catch {
-            Write-Line "[ERROR] No se pudo leer el archivo: $($_.Exception.Message)"
+# Recolectar archivos recursivamente
+$allFiles = Get-ChildItem -Path $rootPath -Recurse -File -Force | Where-Object {
+    $file = $_
+    # Excluir carpetas no deseadas
+    $excluded = $false
+    foreach ($dir in $excludeDirs) {
+        if ($file.FullName -match [regex]::Escape("\$dir\")) {
+            $excluded = $true
+            break
         }
-
-        Write-Line ""
-        Write-Line ""
     }
-} else {
-    Write-Line "[ADVERTENCIA] No se encontró la carpeta 'src' en el proyecto."
-}
+    if ($excluded) { return $false }
 
-# ============================================================
-# 4) CONTENIDO DE OTROS ARCHIVOS DE CONFIGURACIÓN RELEVANTES
-# ============================================================
-Write-Line ""
-Write-Line "================================================================"
-Write-Line "  CONTENIDO DE OTROS ARCHIVOS DE CONFIGURACIÓN"
-Write-Line "================================================================"
-Write-Line ""
+    # Incluir solo extensiones deseadas
+    foreach ($pat in $includePatterns) {
+        if ($file.Name -like $pat) { return $true }
+    }
+    return $false
+} | Sort-Object FullName
 
-$otherFiles = @(
-    "application.properties",
-    "application.yml",
-    "application.yaml",
-    "application-dev.properties",
-    "application-prod.properties",
-    ".gitignore",
-    "README.md"
-)
+$total = $allFiles.Count
+$counter = 0
 
-$foundOthers = @()
-foreach ($pattern in $otherFiles) {
-    $found = Get-ChildItem -Path $srcPath -Recurse -Filter $pattern -File -ErrorAction SilentlyContinue
-    if ($found) { $foundOthers += $found }
-}
+foreach ($file in $allFiles) {
+    $counter++
+    $relative = $file.FullName.Substring($rootPath.Length).TrimStart('\')
 
-$foundOthers = $foundOthers | Sort-Object FullName -Unique
+    Write-Line "======================================================================"
+    Write-Line " ARCHIVO [$counter/$total]: $relative"
+    Write-Line " Ruta completa: $($file.FullName)"
+    Write-Line " Tamaño: $($file.Length) bytes"
+    Write-Line "======================================================================"
 
-if ($foundOthers.Count -gt 0) {
-    foreach ($file in $foundOthers) {
-        $relativePath = $file.FullName.Replace($rootPath, "").TrimStart("\")
-        Write-Line "================================================================"
-        Write-Line "  ARCHIVO: $relativePath"
-        Write-Line "================================================================"
-        Write-Line ""
-        try {
-            Get-Content $file.FullName -Encoding UTF8 | ForEach-Object { Write-Line $_ }
-        } catch {
-            Write-Line "[ERROR] No se pudo leer el archivo: $($_.Exception.Message)"
+    try {
+        $content = Get-Content -Path $file.FullName -Raw -Encoding UTF8 -ErrorAction Stop
+        if ([string]::IsNullOrEmpty($content)) {
+            Write-Line "(ARCHIVO VACIO)"
+        } else {
+            Write-Line $content
         }
-        Write-Line ""
-        Write-Line ""
     }
-} else {
-    Write-Line "No se encontraron archivos de configuración adicionales en src."
+    catch {
+        Write-Line "(ERROR AL LEER: $($_.Exception.Message))"
+    }
+
+    Write-Line ""
+    Write-Line ""
 }
 
-# ============================================================
-# CIERRE
-# ============================================================
-Write-Line ""
-Write-Line "================================================================"
-Write-Line "  FIN DEL DOCUMENTO"
-Write-Line "  Generado: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')"
-Write-Line "================================================================"
+# ============ 3) RESUMEN FINAL ============
+Write-Line "======================================================================"
+Write-Line "   RESUMEN"
+Write-Line "======================================================================"
+Write-Line " Total de archivos procesados: $total"
+Write-Line " Archivo generado en: $outputFile"
+Write-Line " Fecha: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')"
+Write-Line "======================================================================"
 
 Write-Host ""
-Write-Host "==========================================" -ForegroundColor Green
-Write-Host " PROCESO COMPLETADO EXITOSAMENTE" -ForegroundColor Green
-Write-Host "==========================================" -ForegroundColor Green
-Write-Host " Archivo generado: $outputFile" -ForegroundColor Cyan
-Write-Host " Tamaño: $([math]::Round((Get-Item $outputFile).Length / 1KB, 2)) KB" -ForegroundColor Cyan
-Write-Host "==========================================" -ForegroundColor Green
+Write-Host "=============================================" -ForegroundColor Green
+Write-Host " LISTO! Archivo generado:" -ForegroundColor Green
+Write-Host " $outputFile" -ForegroundColor Yellow
+Write-Host " Total archivos: $total" -ForegroundColor Cyan
+Write-Host "=============================================" -ForegroundColor Green
 Write-Host ""
