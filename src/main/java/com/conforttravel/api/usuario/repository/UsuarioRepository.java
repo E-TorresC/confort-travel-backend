@@ -9,4 +9,6 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 
     // Aquí declaras el método que falta
     Optional<Usuario> findByEmail(String email);
+
+    Optional<Usuario> findFirstByActivoTrueOrderByIdAsc();
 }
