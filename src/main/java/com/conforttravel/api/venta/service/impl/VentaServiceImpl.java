@@ -2,6 +2,7 @@ package com.conforttravel.api.venta.service.impl;
 
 import com.conforttravel.api.cliente.entity.Cliente;
 import com.conforttravel.api.cliente.repository.ClienteRepository;
+import com.conforttravel.api.shared.dto.PageResponse;
 import com.conforttravel.api.shared.exception.BusinessException;
 import com.conforttravel.api.shared.exception.ResourceNotFoundException;
 import com.conforttravel.api.usuario.entity.Usuario;
@@ -101,13 +102,18 @@ public class VentaServiceImpl implements VentaService {
     }
 
     @Override
-    public Page<VentaResponse> buscar(VentaFilterRequest filter, Pageable pageable) {
-        return ventaRepository
-                .findAll(
-                        ventaSpecificationBuilder.build(filter),
-                        pageable
-                )
-                .map(ventaMapper::toResponseDto);
+    public PageResponse<VentaResponse> buscar(
+            VentaFilterRequest filter,
+            Pageable pageable
+    ) {
+        return PageResponse.from(
+                ventaRepository
+                        .findAll(
+                                ventaSpecificationBuilder.build(filter),
+                                pageable
+                        )
+                        .map(ventaMapper::toResponseDto)
+        );
     }
 
     private Venta obtenerEntidad(Long id) {

@@ -8,9 +8,9 @@ import com.conforttravel.api.aerolinea.mapper.AerolineaMapper;
 import com.conforttravel.api.aerolinea.repository.AerolineaRepository;
 import com.conforttravel.api.aerolinea.service.AerolineaService;
 import com.conforttravel.api.aerolinea.specification.AerolineaSpecificationBuilder;
+import com.conforttravel.api.shared.dto.PageResponse;
 import com.conforttravel.api.shared.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -79,13 +79,18 @@ public class AerolineaServiceImpl implements AerolineaService {
     }
 
     @Override
-    public Page<AerolineaResponse> buscar(AerolineaFilterRequest filter, Pageable pageable) {
-        return aerolineaRepository
-                .findAll(
-                        aerolineaSpecificationBuilder.build(filter),
-                        pageable
-                )
-                .map(aerolineaMapper::toResponseDto);
+    public PageResponse<AerolineaResponse> buscar(
+            AerolineaFilterRequest filter,
+            Pageable pageable
+    ) {
+        return PageResponse.from(
+                aerolineaRepository
+                        .findAll(
+                                aerolineaSpecificationBuilder.build(filter),
+                                pageable
+                        )
+                        .map(aerolineaMapper::toResponseDto)
+        );
     }
 
     private Aerolinea obtenerEntidad(Long id) {

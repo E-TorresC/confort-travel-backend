@@ -1,5 +1,6 @@
 package com.conforttravel.api.venta.controller;
 
+import com.conforttravel.api.shared.dto.PageResponse;
 import com.conforttravel.api.venta.dto.VentaFilterRequest;
 import com.conforttravel.api.venta.dto.VentaRequest;
 import com.conforttravel.api.venta.dto.VentaResponse;
@@ -67,8 +68,8 @@ public class VentaController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/buscar")
-    public ResponseEntity<Page<VentaResponse>> buscar(
+    @GetMapping("/page")
+    public ResponseEntity<PageResponse<VentaResponse>> buscar(
 
             @RequestParam(required = false)
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
@@ -90,29 +91,9 @@ public class VentaController {
             @RequestParam(required = false)
             Long agenteId,
 
-            @RequestParam(defaultValue = "0")
-            int page,
-
-            @RequestParam(defaultValue = "10")
-            int size,
-
-            @RequestParam(defaultValue = "fechaCompra")
-            String sortBy,
-
-            @RequestParam(defaultValue = "desc")
-            String direction
+            Pageable pageable
 
     ) {
-
-        Sort sort = direction.equalsIgnoreCase("asc")
-                ? Sort.by(sortBy).ascending()
-                : Sort.by(sortBy).descending();
-
-        Pageable pageable = PageRequest.of(
-                page,
-                size,
-                sort
-        );
 
         VentaFilterRequest filter =
                 new VentaFilterRequest(

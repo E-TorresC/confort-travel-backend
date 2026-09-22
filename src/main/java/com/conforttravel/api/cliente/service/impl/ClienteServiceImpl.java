@@ -7,6 +7,7 @@ import com.conforttravel.api.cliente.entity.Cliente;
 import com.conforttravel.api.cliente.mapper.ClienteMapper;
 import com.conforttravel.api.cliente.repository.ClienteRepository;
 import com.conforttravel.api.cliente.service.ClienteService;
+import com.conforttravel.api.shared.dto.PageResponse;
 import com.conforttravel.api.shared.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -74,13 +75,18 @@ public class ClienteServiceImpl implements ClienteService {
     }
 
     @Override
-    public Page<ClienteResponse> buscar(ClienteFilterRequest filter, Pageable pageable) {
-        return clienteRepository
-                .findAll(
-                        clienteSpecificationBuilder.build(filter),
-                        pageable
-                )
-                .map(clienteMapper::toResponseDto);
+    public PageResponse<ClienteResponse> buscar(
+            ClienteFilterRequest filter,
+            Pageable pageable
+    ) {
+        return PageResponse.from(
+                clienteRepository
+                        .findAll(
+                                clienteSpecificationBuilder.build(filter),
+                                pageable
+                        )
+                        .map(clienteMapper::toResponseDto)
+        );
     }
 
     private Cliente obtenerEntidad(Long id) {

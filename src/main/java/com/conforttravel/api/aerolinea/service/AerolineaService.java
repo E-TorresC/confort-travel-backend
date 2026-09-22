@@ -3,7 +3,7 @@ package com.conforttravel.api.aerolinea.service;
 import com.conforttravel.api.aerolinea.dto.AerolineaFilterRequest;
 import com.conforttravel.api.aerolinea.dto.AerolineaRequest;
 import com.conforttravel.api.aerolinea.dto.AerolineaResponse;
-import org.springframework.data.domain.Page;
+import com.conforttravel.api.shared.dto.PageResponse;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
@@ -20,7 +20,7 @@ public interface AerolineaService {
 
     void eliminar(Long id);
 
-    Page<AerolineaResponse> buscar(
+    PageResponse<AerolineaResponse> buscar(
             AerolineaFilterRequest filter,
             Pageable pageable
     );
