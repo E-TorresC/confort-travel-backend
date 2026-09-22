@@ -1,8 +1,8 @@
 # Script: Generar árbol + contenido de archivos del proyecto
-# Salida: codigo_hasta_fase_13.txt
+# Salida: codigo_hasta_fase_15.txt
 
 $rootPath = "E:\PROYECTOS_FULLSTACK\confort_travel\confort-travel-backend"
-$outputFile = Join-Path $rootPath "codigo_hasta_fase_13.txt"
+$outputFile = Join-Path $rootPath "codigo_hasta_fase_15.txt"
 
 # Extensiones/archivos a incluir
 $includePatterns = @("*.java", "*.xml", "*.yml", "*.yaml", "*.properties", "*.sql", "*.json")

@@ -7,7 +7,7 @@ import com.conforttravel.api.checkin.entity.EstadoCheckIn;
 import com.conforttravel.api.checkin.mapper.CheckInMapper;
 import com.conforttravel.api.checkin.repository.CheckInRepository;
 import com.conforttravel.api.checkin.service.CheckInService;
-import com.conforttravel.api.shared.exception.BusinessException;
+import com.conforttravel.api.shared.exception.ConflictException;
 import com.conforttravel.api.shared.exception.ResourceNotFoundException;
 import com.conforttravel.api.tramo.entity.Tramo;
 import com.conforttravel.api.tramo.repository.TramoRepository;
@@ -20,7 +20,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
+@Transactional
 public class CheckInServiceImpl implements CheckInService {
 
     private final CheckInRepository checkInRepository;
@@ -28,40 +28,66 @@ public class CheckInServiceImpl implements CheckInService {
     private final CheckInMapper checkInMapper;
 
     @Override
-    @Transactional
     public CheckInResponse crear(CheckInRequest request) {
+
         Tramo tramo = tramoRepository.findById(request.tramoId())
                 .orElseThrow(() ->
                         new ResourceNotFoundException(
-                                "Tramo no encontrado con id: " + request.tramoId()
+                                "Tramo no encontrado con id: "
+                                        + request.tramoId()
                         )
                 );
 
-        CheckIn checkIn = checkInMapper.toEntity(request);
+        if (checkInRepository.existsByTramoId(request.tramoId())) {
 
-        checkIn.setTramo(tramo);
-        checkIn.setEstado(EstadoCheckIn.PENDIENTE);
+            throw new ConflictException(
+                    "El tramo ya tiene un seguimiento de check-in"
+            );
+        }
 
-        /*
-         * La fecha disponible será calculada por la lógica de negocio
-         * correspondiente al tipo de viaje y aerolínea.
-         *
-         * Esta lógica será desarrollada en la fase de reglas de negocio.
-         */
-        checkIn.setFechaDisponible(tramo.getFechaHoraSalida());
+        OffsetDateTime fechaDisponible =
+                calcularFechaDisponible(tramo);
 
-        CheckIn guardado = checkInRepository.save(checkIn);
+        CheckIn checkIn = CheckIn.builder()
+                .tramo(tramo)
+                .estado(EstadoCheckIn.PENDIENTE)
+                .fechaDisponible(fechaDisponible)
+                .build();
 
-        return checkInMapper.toResponseDto(guardado);
+        return checkInMapper.toResponseDto(
+                checkInRepository.save(checkIn)
+        );
     }
 
     @Override
+    @Transactional(readOnly = true)
     public CheckInResponse obtenerPorId(Long id) {
-        return checkInMapper.toResponseDto(obtenerEntidad(id));
+
+        CheckIn checkIn = obtenerEntidad(id);
+
+        return checkInMapper.toResponseDto(checkIn);
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public CheckInResponse obtenerPorTramo(Long tramoId) {
+
+        CheckIn checkIn = checkInRepository
+                .findByTramoId(tramoId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "No existe seguimiento de check-in " +
+                                        "para el tramo con id: " + tramoId
+                        )
+                );
+
+        return checkInMapper.toResponseDto(checkIn);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public List<CheckInResponse> obtenerTodos() {
+
         return checkInRepository.findAll()
                 .stream()
                 .map(checkInMapper::toResponseDto)
@@ -69,49 +95,84 @@ public class CheckInServiceImpl implements CheckInService {
     }
 
     @Override
-    @Transactional
-    public CheckInResponse notificar(Long id) {
+    @Transactional(readOnly = true)
+    public List<CheckInResponse> obtenerPorEstado(
+            EstadoCheckIn estado
+    ) {
+
+        return checkInRepository.findByEstado(estado)
+                .stream()
+                .map(checkInMapper::toResponseDto)
+                .toList();
+    }
+
+    @Override
+    public CheckInResponse marcarNotificado(Long id) {
+
         CheckIn checkIn = obtenerEntidad(id);
 
         if (checkIn.getEstado() != EstadoCheckIn.PENDIENTE) {
-            throw new BusinessException(
-                    "El check-in solo puede pasar de PENDIENTE a NOTIFICADO"
+
+            throw new ConflictException(
+                    "El check-in no se encuentra en estado PENDIENTE"
             );
         }
 
         checkIn.setEstado(EstadoCheckIn.NOTIFICADO);
-        checkIn.setFechaNotificacion(OffsetDateTime.now());
+        checkIn.setFechaNotificacion(
+                OffsetDateTime.now()
+        );
 
-        CheckIn actualizado = checkInRepository.save(checkIn);
-
-        return checkInMapper.toResponseDto(actualizado);
+        return checkInMapper.toResponseDto(
+                checkInRepository.save(checkIn)
+        );
     }
 
     @Override
-    @Transactional
-    public CheckInResponse atender(Long id) {
+    public CheckInResponse marcarAtendido(Long id) {
+
         CheckIn checkIn = obtenerEntidad(id);
 
         if (checkIn.getEstado() != EstadoCheckIn.NOTIFICADO) {
-            throw new BusinessException(
-                    "El check-in solo puede pasar de NOTIFICADO a ATENDIDO"
+
+            throw new ConflictException(
+                    "El check-in debe estar NOTIFICADO " +
+                            "antes de marcarlo como ATENDIDO"
             );
         }
 
         checkIn.setEstado(EstadoCheckIn.ATENDIDO);
-        checkIn.setFechaAtencion(OffsetDateTime.now());
+        checkIn.setFechaAtencion(
+                OffsetDateTime.now()
+        );
 
-        CheckIn actualizado = checkInRepository.save(checkIn);
-
-        return checkInMapper.toResponseDto(actualizado);
+        return checkInMapper.toResponseDto(
+                checkInRepository.save(checkIn)
+        );
     }
 
     private CheckIn obtenerEntidad(Long id) {
+
         return checkInRepository.findById(id)
                 .orElseThrow(() ->
                         new ResourceNotFoundException(
                                 "Check-in no encontrado con id: " + id
                         )
                 );
+    }
+
+    private OffsetDateTime calcularFechaDisponible(
+            Tramo tramo
+    ) {
+
+        if (tramo.getFechaHoraSalida() == null) {
+
+            throw new ConflictException(
+                    "El tramo no tiene fecha y hora de salida"
+            );
+        }
+
+        return tramo.getFechaHoraSalida()
+                .minusHours(48);
     }
 }

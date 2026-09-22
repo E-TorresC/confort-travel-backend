@@ -16,7 +16,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
-@EnableMethodSecurity
+//@EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
@@ -39,7 +39,7 @@ public class SecurityConfig {
                         )
                 )
 
-                .authorizeHttpRequests(auth -> auth
+/*                .authorizeHttpRequests(auth -> auth
 
                         // Autenticación
                         .requestMatchers(
@@ -56,6 +56,11 @@ public class SecurityConfig {
                         // Resto de endpoints
                         .anyRequest()
                         .authenticated()
+                )*/
+
+                // ⚠️ TEMPORAL: permite todo sin autenticación
+                .authorizeHttpRequests(auth -> auth
+                        .anyRequest().permitAll()
                 )
 
                 .exceptionHandling(exception ->
