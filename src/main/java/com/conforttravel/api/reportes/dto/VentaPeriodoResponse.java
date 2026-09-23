@@ -1,23 +1,21 @@
 package com.conforttravel.api.reportes.dto;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 public record VentaPeriodoResponse(
-
         Long ventaId,
-
-        LocalDateTime fechaCompra,
-
+        OffsetDateTime fechaCompra,
         String cliente,
-
         String agente,
-
         BigDecimal precioInicial,
-
-        BigDecimal precioFinal,
-
-        BigDecimal ganancia
-
+        BigDecimal precioFinal
 ) {
+    // Propiedad calculada, no forma parte del constructor
+    public BigDecimal ganancia() {
+        if (precioInicial == null || precioFinal == null) {
+            return null;
+        }
+        return precioFinal.subtract(precioInicial);
+    }
 }

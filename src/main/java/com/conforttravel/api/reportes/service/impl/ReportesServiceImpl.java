@@ -14,6 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 
 @Service
@@ -33,8 +35,8 @@ public class ReportesServiceImpl implements ReportesService {
         validarRangoFechas(fechaDesde, fechaHasta);
 
         return reportesRepository.obtenerVentasPorPeriodo(
-                fechaDesde.atStartOfDay(),
-                fechaHasta.plusDays(1).atStartOfDay()
+                inicioDelDia(fechaDesde),
+                inicioDelDiaSiguiente(fechaHasta)
         );
     }
 
@@ -48,8 +50,8 @@ public class ReportesServiceImpl implements ReportesService {
         validarRangoFechas(fechaDesde, fechaHasta);
 
         return reportesRepository.obtenerVentasPorAgente(
-                fechaDesde.atStartOfDay(),
-                fechaHasta.plusDays(1).atStartOfDay()
+                inicioDelDia(fechaDesde),
+                inicioDelDiaSiguiente(fechaHasta)
         );
     }
 
@@ -64,8 +66,8 @@ public class ReportesServiceImpl implements ReportesService {
 
         List<Object[]> resultados =
                 reportesRepository.obtenerVentasPorAerolinea(
-                        fechaDesde.atStartOfDay(),
-                        fechaHasta.plusDays(1).atStartOfDay()
+                        inicioDelDia(fechaDesde),
+                        inicioDelDiaSiguiente(fechaHasta)
                 );
 
         return resultados.stream()
@@ -83,8 +85,8 @@ public class ReportesServiceImpl implements ReportesService {
         validarRangoFechas(fechaDesde, fechaHasta);
 
         return reportesRepository.obtenerGananciaPorPeriodo(
-                fechaDesde.atStartOfDay(),
-                fechaHasta.plusDays(1).atStartOfDay()
+                inicioDelDia(fechaDesde),
+                inicioDelDiaSiguiente(fechaHasta)
         );
     }
 
@@ -161,5 +163,13 @@ public class ReportesServiceImpl implements ReportesService {
                     "La fecha desde no puede ser posterior a la fecha hasta"
             );
         }
+    }
+
+    private OffsetDateTime inicioDelDia(LocalDate fecha) {
+        return fecha.atStartOfDay(ZoneOffset.UTC).toOffsetDateTime();
+    }
+
+    private OffsetDateTime inicioDelDiaSiguiente(LocalDate fecha) {
+        return fecha.plusDays(1).atStartOfDay(ZoneOffset.UTC).toOffsetDateTime();
     }
 }

@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 public interface ReportesRepository extends JpaRepository<
@@ -22,25 +23,24 @@ public interface ReportesRepository extends JpaRepository<
      * Ventas por período
      */
     @Query("""
-            SELECT new com.conforttravel.api.reportes.dto.VentaPeriodoResponse(
-                v.id,
-                v.fechaCompra,
-                CONCAT(c.nombres, ' ', c.apellidos),
-                CONCAT(u.nombre, ' ', u.apellido),
-                v.precioInicial,
-                v.precioFinal,
-                (v.precioFinal - v.precioInicial)
-            )
-            FROM Venta v
-            JOIN v.cliente c
-            JOIN v.agente u
-            WHERE v.fechaCompra >= :fechaDesde
-              AND v.fechaCompra < :fechaHasta
-            ORDER BY v.fechaCompra DESC
-            """)
+        SELECT new com.conforttravel.api.reportes.dto.VentaPeriodoResponse(
+            v.id,
+            v.fechaCompra,
+            CONCAT(c.nombres, ' ', c.apellidos),
+            CONCAT(u.nombre, ' ', u.apellido),
+            v.precioInicial,
+            v.precioFinal
+        )
+        FROM Venta v
+        JOIN v.cliente c
+        JOIN v.agente u
+        WHERE v.fechaCompra >= :fechaDesde
+          AND v.fechaCompra < :fechaHasta
+        ORDER BY v.fechaCompra DESC
+        """)
     List<VentaPeriodoResponse> obtenerVentasPorPeriodo(
-            @Param("fechaDesde") LocalDateTime fechaDesde,
-            @Param("fechaHasta") LocalDateTime fechaHasta
+            @Param("fechaDesde") OffsetDateTime fechaDesde,
+            @Param("fechaHasta") OffsetDateTime  fechaHasta
     );
 
 
@@ -64,8 +64,8 @@ public interface ReportesRepository extends JpaRepository<
             ORDER BY SUM(v.precioFinal) DESC
             """)
     List<ReporteAgrupadoResponse> obtenerVentasPorAgente(
-            @Param("fechaDesde") LocalDateTime fechaDesde,
-            @Param("fechaHasta") LocalDateTime fechaHasta
+            @Param("fechaDesde") OffsetDateTime  fechaDesde,
+            @Param("fechaHasta") OffsetDateTime  fechaHasta
     );
 
 
@@ -76,17 +76,17 @@ public interface ReportesRepository extends JpaRepository<
     @Query("""
             SELECT new com.conforttravel.api.reportes.dto.GananciaPeriodoResponse(
                 COUNT(v.id),
-                COALESCE(SUM(v.precioFinal), 0),
-                COALESCE(SUM(v.precioInicial), 0),
-                COALESCE(SUM(v.precioFinal - v.precioInicial), 0)
+                SUM(v.precioFinal),
+                SUM(v.precioInicial),
+                SUM(v.precioFinal - v.precioInicial)
             )
             FROM Venta v
             WHERE v.fechaCompra >= :fechaDesde
               AND v.fechaCompra < :fechaHasta
             """)
     GananciaPeriodoResponse obtenerGananciaPorPeriodo(
-            @Param("fechaDesde") LocalDateTime fechaDesde,
-            @Param("fechaHasta") LocalDateTime fechaHasta
+            @Param("fechaDesde") OffsetDateTime  fechaDesde,
+            @Param("fechaHasta") OffsetDateTime  fechaHasta
     );
 
 
@@ -163,7 +163,7 @@ public interface ReportesRepository extends JpaRepository<
             nativeQuery = true
     )
     List<Object[]> obtenerVentasPorAerolinea(
-            @Param("fechaDesde") LocalDateTime fechaDesde,
-            @Param("fechaHasta") LocalDateTime fechaHasta
+            @Param("fechaDesde") OffsetDateTime  fechaDesde,
+            @Param("fechaHasta") OffsetDateTime  fechaHasta
     );
 }
