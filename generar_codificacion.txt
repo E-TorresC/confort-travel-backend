@@ -1,7 +1,7 @@
 # Script: Generar árbol + contenido de archivos del proyecto (compatible PS 5.1)
 
 $rootPath = "E:\PROYECTOS_FULLSTACK\confort_travel\confort-travel-backend"
-$outputFile = Join-Path $rootPath "codigo_hasta_fase_16.txt"
+$outputFile = Join-Path $rootPath "codigo_hasta_fase_18.txt"
 
 $includePatterns = @("*.java", "*.xml", "*.yml", "*.yaml", "*.properties", "*.sql", "*.json")
 $excludeDirs = @("target", ".git", ".idea", ".mvn", "node_modules", ".settings", "bin")
@@ -19,7 +19,7 @@ function Write-Line {
 
 try {
     Write-Line "======================================================================"
-    Write-Line "   PROYECTO: CONFORT TRAVEL BACKEND - CODIGO HASTA FASE 16"
+    Write-Line "   PROYECTO: CONFORT TRAVEL BACKEND - CODIGO HASTA FASE 18"
     Write-Line "   Generado: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')"
     Write-Line "   Ruta: $rootPath"
     Write-Line "======================================================================"

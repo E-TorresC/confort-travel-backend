@@ -1,0 +1,259 @@
+======================================================================
+   PROYECTO: CONFORT TRAVEL BACKEND
+   ESTRUCTURA DE DIRECTORIOS (ARBOL)
+   Generado: 2026-09-23 06:22:14
+   Ruta: E:\PROYECTOS_FULLSTACK\confort_travel\confort-travel-backend
+======================================================================
+
+confort-travel-backend
+├── src
+│   ├── main
+│   │   ├── java
+│   │   │   └── com
+│   │   │       └── conforttravel
+│   │   │           └── api
+│   │   │               ├── aerolinea
+│   │   │               │   ├── controller
+│   │   │               │   │   └── AerolineaController.java
+│   │   │               │   ├── dto
+│   │   │               │   │   ├── AerolineaFilterRequest.java
+│   │   │               │   │   ├── AerolineaRequest.java
+│   │   │               │   │   └── AerolineaResponse.java
+│   │   │               │   ├── entity
+│   │   │               │   │   └── Aerolinea.java
+│   │   │               │   ├── mapper
+│   │   │               │   │   └── AerolineaMapper.java
+│   │   │               │   ├── repository
+│   │   │               │   │   └── AerolineaRepository.java
+│   │   │               │   ├── service
+│   │   │               │   │   ├── impl
+│   │   │               │   │   │   └── AerolineaServiceImpl.java
+│   │   │               │   │   └── AerolineaService.java
+│   │   │               │   └── specification
+│   │   │               │       ├── AerolineaSpecification.java
+│   │   │               │       └── AerolineaSpecificationBuilder.java
+│   │   │               ├── auditoria
+│   │   │               │   ├── dto
+│   │   │               │   │   └── AuditLogResponse.java
+│   │   │               │   ├── entity
+│   │   │               │   │   └── AuditLog.java
+│   │   │               │   └── repository
+│   │   │               │       └── AuditLogRepository.java
+│   │   │               ├── auth
+│   │   │               │   ├── controller
+│   │   │               │   │   └── AuthController.java
+│   │   │               │   ├── dto
+│   │   │               │   │   ├── LoginRequest.java
+│   │   │               │   │   └── LoginResponse.java
+│   │   │               │   ├── security
+│   │   │               │   │   ├── CustomUserDetailsService.java
+│   │   │               │   │   ├── JwtAccessDeniedHandler.java
+│   │   │               │   │   ├── JwtAuthenticationEntryPoint.java
+│   │   │               │   │   ├── JwtAuthenticationFilter.java
+│   │   │               │   │   ├── JwtService.java
+│   │   │               │   │   └── SecurityConfig.java
+│   │   │               │   └── service
+│   │   │               │       ├── impl
+│   │   │               │       │   └── AuthServiceImpl.java
+│   │   │               │       └── AuthService.java
+│   │   │               ├── checkin
+│   │   │               │   ├── controller
+│   │   │               │   │   └── CheckInController.java
+│   │   │               │   ├── dto
+│   │   │               │   │   ├── CheckInRequest.java
+│   │   │               │   │   └── CheckInResponse.java
+│   │   │               │   ├── entity
+│   │   │               │   │   ├── CheckIn.java
+│   │   │               │   │   └── EstadoCheckIn.java
+│   │   │               │   ├── mapper
+│   │   │               │   │   └── CheckInMapper.java
+│   │   │               │   ├── repository
+│   │   │               │   │   └── CheckInRepository.java
+│   │   │               │   └── service
+│   │   │               │       ├── impl
+│   │   │               │       │   ├── CheckInNotificationServiceImpl.java
+│   │   │               │       │   └── CheckInServiceImpl.java
+│   │   │               │       ├── CheckInNotificationService.java
+│   │   │               │       └── CheckInService.java
+│   │   │               ├── cliente
+│   │   │               │   ├── controller
+│   │   │               │   │   └── ClienteController.java
+│   │   │               │   ├── dto
+│   │   │               │   │   ├── ClienteFilterRequest.java
+│   │   │               │   │   ├── ClienteRequest.java
+│   │   │               │   │   └── ClienteResponse.java
+│   │   │               │   ├── entity
+│   │   │               │   │   └── Cliente.java
+│   │   │               │   ├── mapper
+│   │   │               │   │   └── ClienteMapper.java
+│   │   │               │   ├── repository
+│   │   │               │   │   └── ClienteRepository.java
+│   │   │               │   ├── service
+│   │   │               │   │   ├── impl
+│   │   │               │   │   │   └── ClienteServiceImpl.java
+│   │   │               │   │   └── ClienteService.java
+│   │   │               │   └── specification
+│   │   │               │       ├── ClienteSpecification.java
+│   │   │               │       └── ClienteSpecificationBuilder.java
+│   │   │               ├── config
+│   │   │               │   └── DataInitializer.java
+│   │   │               ├── notificacion
+│   │   │               │   ├── dto
+│   │   │               │   │   └── NotificacionResponse.java
+│   │   │               │   ├── entity
+│   │   │               │   │   ├── Notificacion.java
+│   │   │               │   │   └── TipoNotificacion.java
+│   │   │               │   └── repository
+│   │   │               │       └── NotificacionRepository.java
+│   │   │               ├── reserva
+│   │   │               │   ├── controller
+│   │   │               │   │   └── ReservaController.java
+│   │   │               │   ├── dto
+│   │   │               │   │   ├── ReservaRequest.java
+│   │   │               │   │   └── ReservaResponse.java
+│   │   │               │   ├── entity
+│   │   │               │   │   └── Reserva.java
+│   │   │               │   ├── mapper
+│   │   │               │   │   └── ReservaMapper.java
+│   │   │               │   ├── repository
+│   │   │               │   │   └── ReservaRepository.java
+│   │   │               │   └── service
+│   │   │               │       ├── impl
+│   │   │               │       │   └── ReservaServiceImpl.java
+│   │   │               │       └── ReservaService.java
+│   │   │               ├── scheduler
+│   │   │               │   └── CheckInScheduler.java
+│   │   │               ├── servicio
+│   │   │               │   ├── controller
+│   │   │               │   │   └── ServicioAdicionalController.java
+│   │   │               │   ├── dto
+│   │   │               │   │   ├── ServicioAdicionalRequest.java
+│   │   │               │   │   └── ServicioAdicionalResponse.java
+│   │   │               │   ├── entity
+│   │   │               │   │   └── ServicioAdicional.java
+│   │   │               │   ├── mapper
+│   │   │               │   │   └── ServicioAdicionalMapper.java
+│   │   │               │   ├── repository
+│   │   │               │   │   └── ServicioAdicionalRepository.java
+│   │   │               │   └── service
+│   │   │               │       ├── impl
+│   │   │               │       │   └── ServicioAdicionalServiceImpl.java
+│   │   │               │       └── ServicioAdicionalService.java
+│   │   │               ├── shared
+│   │   │               │   ├── dto
+│   │   │               │   │   └── PageResponse.java
+│   │   │               │   ├── exception
+│   │   │               │   │   ├── ApiErrorResponse.java
+│   │   │               │   │   ├── BusinessException.java
+│   │   │               │   │   ├── ConflictException.java
+│   │   │               │   │   ├── GlobalExceptionHandler.java
+│   │   │               │   │   └── ResourceNotFoundException.java
+│   │   │               │   └── mapper
+│   │   │               │       └── MapStructConfig.java
+│   │   │               ├── tramo
+│   │   │               │   ├── controller
+│   │   │               │   │   └── TramoController.java
+│   │   │               │   ├── dto
+│   │   │               │   │   ├── TramoRequest.java
+│   │   │               │   │   └── TramoResponse.java
+│   │   │               │   ├── entity
+│   │   │               │   │   ├── TipoTramo.java
+│   │   │               │   │   ├── TipoViaje.java
+│   │   │               │   │   └── Tramo.java
+│   │   │               │   ├── mapper
+│   │   │               │   │   └── TramoMapper.java
+│   │   │               │   ├── repository
+│   │   │               │   │   └── TramoRepository.java
+│   │   │               │   └── service
+│   │   │               │       ├── impl
+│   │   │               │       │   └── TramoServiceImpl.java
+│   │   │               │       └── TramoService.java
+│   │   │               ├── usuario
+│   │   │               │   ├── controller
+│   │   │               │   │   └── UsuarioController.java
+│   │   │               │   ├── dto
+│   │   │               │   │   ├── UsuarioRequest.java
+│   │   │               │   │   └── UsuarioResponse.java
+│   │   │               │   ├── entity
+│   │   │               │   │   ├── Rol.java
+│   │   │               │   │   └── Usuario.java
+│   │   │               │   ├── mapper
+│   │   │               │   │   └── UsuarioMapper.java
+│   │   │               │   ├── repository
+│   │   │               │   │   └── UsuarioRepository.java
+│   │   │               │   └── service
+│   │   │               │       ├── impl
+│   │   │               │       │   └── UsuarioServiceImpl.java
+│   │   │               │       └── UsuarioService.java
+│   │   │               ├── venta
+│   │   │               │   ├── controller
+│   │   │               │   │   ├── VentaController.java
+│   │   │               │   │   └── VentaServicioController.java
+│   │   │               │   ├── dto
+│   │   │               │   │   ├── VentaFilterRequest.java
+│   │   │               │   │   ├── VentaRequest.java
+│   │   │               │   │   ├── VentaResponse.java
+│   │   │               │   │   ├── VentaServicioRequest.java
+│   │   │               │   │   └── VentaServicioResponse.java
+│   │   │               │   ├── entity
+│   │   │               │   │   ├── Venta.java
+│   │   │               │   │   ├── VentaServicio.java
+│   │   │               │   │   └── VentaServicioId.java
+│   │   │               │   ├── mapper
+│   │   │               │   │   ├── VentaMapper.java
+│   │   │               │   │   └── VentaServicioMapper.java
+│   │   │               │   ├── repository
+│   │   │               │   │   ├── VentaRepository.java
+│   │   │               │   │   └── VentaServicioRepository.java
+│   │   │               │   ├── service
+│   │   │               │   │   ├── impl
+│   │   │               │   │   │   ├── VentaServiceImpl.java
+│   │   │               │   │   │   └── VentaServicioServiceImpl.java
+│   │   │               │   │   ├── VentaService.java
+│   │   │               │   │   └── VentaServicioService.java
+│   │   │               │   └── specification
+│   │   │               │       ├── VentaSpecification.java
+│   │   │               │       └── VentaSpecificationBuilder.java
+│   │   │               ├── viaje
+│   │   │               │   ├── controller
+│   │   │               │   │   └── ViajeController.java
+│   │   │               │   ├── dto
+│   │   │               │   │   ├── ViajeRequest.java
+│   │   │               │   │   └── ViajeResponse.java
+│   │   │               │   ├── entity
+│   │   │               │   │   └── Viaje.java
+│   │   │               │   ├── mapper
+│   │   │               │   │   └── ViajeMapper.java
+│   │   │               │   ├── repository
+│   │   │               │   │   └── ViajeRepository.java
+│   │   │               │   └── service
+│   │   │               │       ├── impl
+│   │   │               │       │   └── ViajeServiceImpl.java
+│   │   │               │       └── ViajeService.java
+│   │   │               └── ConfortTravelBackendApplication.java
+│   │   └── resources
+│   │       ├── application.yaml
+│   │       └── application-dev.yaml
+│   └── test
+│       ├── java
+│       │   └── com
+│       │       └── conforttravel
+│       │           └── api
+│       │               └── ConfortTravelBackendApplicationTests.java
+│       └── resources
+│           └── application-test.yaml
+├── arbol_directorios.txt
+├── codigo_hasta_fase_17.txt
+├── docker-compose.yml
+├── estructura_proyecto.txt
+├── generar_codificacion.txt
+├── HELP.md
+├── pom.xml
+└── README.md
+
+======================================================================
+   RESUMEN
+======================================================================
+ Archivo generado en: E:\PROYECTOS_FULLSTACK\confort_travel\confort-travel-backend\estructura_proyecto.txt
+ Fecha: 2026-09-23 06:22:15
+======================================================================
