@@ -5,6 +5,7 @@ import org.springframework.data.jpa.domain.Specification;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 public final class VentaSpecification {
 
@@ -12,7 +13,7 @@ public final class VentaSpecification {
     }
 
     public static Specification<Venta> fechaCompraDesde(
-            LocalDateTime fechaDesde
+            OffsetDateTime fechaDesde
     ) {
         return (root, query, criteriaBuilder) -> {
 
@@ -28,7 +29,7 @@ public final class VentaSpecification {
     }
 
     public static Specification<Venta> fechaCompraHasta(
-            LocalDateTime fechaHasta
+            OffsetDateTime fechaHasta
     ) {
         return (root, query, criteriaBuilder) -> {
 

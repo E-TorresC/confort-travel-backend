@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 
 @Service
@@ -55,7 +57,7 @@ public class NotificacionServiceImpl implements NotificacionService {
         Notificacion notificacion = obtenerEntidad(id);
 
         if (notificacion.getFechaLectura() == null) {
-            notificacion.setFechaLectura(LocalDateTime.now());
+            notificacion.setFechaLectura(OffsetDateTime.now(ZoneOffset.UTC));
             notificacion = notificacionRepository.save(notificacion);
         }
 

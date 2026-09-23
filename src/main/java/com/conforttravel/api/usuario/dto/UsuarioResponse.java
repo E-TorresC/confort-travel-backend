@@ -3,6 +3,7 @@ package com.conforttravel.api.usuario.dto;
 import com.conforttravel.api.usuario.entity.Rol;
 
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 public record UsuarioResponse(
 
@@ -18,9 +19,9 @@ public record UsuarioResponse(
 
         Boolean activo,
 
-        LocalDateTime createdAt,
+        OffsetDateTime createdAt,
 
-        LocalDateTime updatedAt,
+        OffsetDateTime updatedAt,
 
         Long version
 ) {

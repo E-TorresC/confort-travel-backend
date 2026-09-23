@@ -7,11 +7,12 @@ import jakarta.validation.constraints.Size;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 public record VentaRequest(
 
         @NotNull(message = "La fecha de compra es obligatoria")
-        LocalDateTime fechaCompra,
+        OffsetDateTime fechaCompra,
 
         @NotNull(message = "El precio inicial es obligatorio")
         @DecimalMin(

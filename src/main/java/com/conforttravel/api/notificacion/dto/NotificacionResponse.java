@@ -3,6 +3,7 @@ package com.conforttravel.api.notificacion.dto;
 import com.conforttravel.api.notificacion.entity.TipoNotificacion;
 
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 public record NotificacionResponse(
 
@@ -12,9 +13,9 @@ public record NotificacionResponse(
 
         String mensaje,
 
-        LocalDateTime fechaCreacion,
+        OffsetDateTime fechaCreacion,
 
-        LocalDateTime fechaLectura,
+        OffsetDateTime fechaLectura,
 
         Long usuarioId,
 

@@ -8,6 +8,8 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 
 @Entity
 @Table(name = "venta")
@@ -26,7 +28,7 @@ public class Venta {
             name = "fecha_compra",
             nullable = false
     )
-    private LocalDateTime fechaCompra;
+    private OffsetDateTime fechaCompra;
 
     @Column(
             name = "precio_inicial",
@@ -76,10 +78,10 @@ public class Venta {
     private Viaje viaje;
 
     @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt;
+    private OffsetDateTime createdAt;
 
     @Column(name = "updated_at", nullable = false)
-    private LocalDateTime updatedAt;
+    private OffsetDateTime updatedAt;
 
     @Version
     @Column(nullable = false)
@@ -97,7 +99,7 @@ public class Venta {
 
     @PrePersist
     protected void onCreate() {
-        LocalDateTime now = LocalDateTime.now();
+        OffsetDateTime now = OffsetDateTime.now(ZoneOffset.UTC);
 
         if (fechaCompra == null) {
             fechaCompra = now;
@@ -109,6 +111,6 @@ public class Venta {
 
     @PreUpdate
     protected void onUpdate() {
-        updatedAt = LocalDateTime.now();
+        updatedAt = OffsetDateTime.now(ZoneOffset.UTC);
     }
 }

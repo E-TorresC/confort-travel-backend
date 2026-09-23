@@ -1,6 +1,7 @@
 package com.conforttravel.api.auditoria.dto;
 
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 public record AuditLogResponse(
 
@@ -14,7 +15,7 @@ public record AuditLogResponse(
 
         Long entidadId,
 
-        LocalDateTime fecha,
+        OffsetDateTime fecha,
 
         String detalle
 ) {

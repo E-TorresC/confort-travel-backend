@@ -2,12 +2,13 @@ package com.conforttravel.api.venta.dto;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 public record VentaResponse(
 
         Long id,
 
-        LocalDateTime fechaCompra,
+        OffsetDateTime fechaCompra,
 
         BigDecimal precioInicial,
 
@@ -27,9 +28,9 @@ public record VentaResponse(
 
         Long viajeId,
 
-        LocalDateTime createdAt,
+        OffsetDateTime createdAt,
 
-        LocalDateTime updatedAt,
+        OffsetDateTime updatedAt,
 
         Long version
 ) {

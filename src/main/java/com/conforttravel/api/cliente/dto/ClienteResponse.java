@@ -1,6 +1,6 @@
 package com.conforttravel.api.cliente.dto;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 public record ClienteResponse(
 
@@ -12,8 +12,8 @@ public record ClienteResponse(
 
         String telefono,
 
-        LocalDateTime createdAt,
+        OffsetDateTime createdAt,
 
-        LocalDateTime updatedAt
+        OffsetDateTime  updatedAt
 ) {
 }

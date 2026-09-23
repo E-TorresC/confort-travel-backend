@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 
 @Entity
 @Table(name = "audit_log")
@@ -36,7 +38,7 @@ public class AuditLog {
     private Long entidadId;
 
     @Column(nullable = false)
-    private LocalDateTime fecha;
+    private OffsetDateTime fecha;
 
     @Column(length = 2000)
     private String detalle;
@@ -44,7 +46,7 @@ public class AuditLog {
     @PrePersist
     protected void onCreate() {
         if (fecha == null) {
-            fecha = LocalDateTime.now();
+            fecha = OffsetDateTime.now(ZoneOffset.UTC);
         }
     }
 }

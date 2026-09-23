@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 
 @Service
@@ -83,7 +84,7 @@ public class CheckInNotificationServiceImpl
                                 + checkIn.getTramo().getId()
                                 + " ya se encuentra disponible."
                 )
-                .fechaCreacion(LocalDateTime.now())
+                .fechaCreacion(OffsetDateTime.now(ZoneOffset.UTC))
                 .usuario(usuario)
                 .checkIn(checkIn)
                 .build();

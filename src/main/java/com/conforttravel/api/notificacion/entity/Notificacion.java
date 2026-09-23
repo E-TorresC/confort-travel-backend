@@ -6,6 +6,8 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 
 @Entity
 @Table(name = "notificacion")
@@ -28,10 +30,10 @@ public class Notificacion {
     private String mensaje;
 
     @Column(name = "fecha_creacion", nullable = false)
-    private LocalDateTime fechaCreacion;
+    private OffsetDateTime fechaCreacion;
 
     @Column(name = "fecha_lectura")
-    private LocalDateTime fechaLectura;
+    private OffsetDateTime fechaLectura;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(
@@ -52,7 +54,7 @@ public class Notificacion {
     @PrePersist
     protected void onCreate() {
         if (fechaCreacion == null) {
-            fechaCreacion = LocalDateTime.now();
+            fechaCreacion = OffsetDateTime.now(ZoneOffset.UTC);
         }
     }
 }

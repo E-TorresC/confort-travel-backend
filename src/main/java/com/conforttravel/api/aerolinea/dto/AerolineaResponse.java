@@ -1,6 +1,7 @@
 package com.conforttravel.api.aerolinea.dto;
 
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 public record AerolineaResponse(
 
@@ -12,8 +13,8 @@ public record AerolineaResponse(
 
         Boolean activo,
 
-        LocalDateTime createdAt,
+        OffsetDateTime createdAt,
 
-        LocalDateTime updatedAt
+        OffsetDateTime updatedAt
 ) {
 }

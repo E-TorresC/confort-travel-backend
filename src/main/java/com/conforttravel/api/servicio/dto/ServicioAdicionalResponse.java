@@ -1,6 +1,7 @@
 package com.conforttravel.api.servicio.dto;
 
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 public record ServicioAdicionalResponse(
 
@@ -12,8 +13,8 @@ public record ServicioAdicionalResponse(
 
         Boolean activo,
 
-        LocalDateTime createdAt,
+        OffsetDateTime createdAt,
 
-        LocalDateTime updatedAt
+        OffsetDateTime updatedAt
 ) {
 }
