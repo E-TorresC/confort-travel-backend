@@ -1,5 +1,6 @@
 package com.conforttravel.api.tramo.service.impl;
 
+import com.conforttravel.api.auditoria.service.AuditLogService;
 import com.conforttravel.api.shared.exception.BusinessException;
 import com.conforttravel.api.shared.exception.ResourceNotFoundException;
 import com.conforttravel.api.tramo.dto.TramoRequest;
@@ -24,6 +25,7 @@ public class TramoServiceImpl implements TramoService {
     private final TramoRepository tramoRepository;
     private final ViajeRepository viajeRepository;
     private final TramoMapper tramoMapper;
+    private final AuditLogService auditLogService;
 
     @Override
     @Transactional
@@ -36,6 +38,16 @@ public class TramoServiceImpl implements TramoService {
         tramo.setViaje(viaje);
 
         Tramo guardado = tramoRepository.save(tramo);
+
+        auditLogService.registrar(
+                "CREAR",
+                "TRAMO",
+                guardado.getId(),
+                "Se creó el tramo desde "
+                        + guardado.getOrigen()
+                        + " hacia "
+                        + guardado.getDestino()
+        );
 
         return tramoMapper.toResponseDto(guardado);
     }
@@ -74,6 +86,16 @@ public class TramoServiceImpl implements TramoService {
 
         Tramo actualizado = tramoRepository.save(tramo);
 
+        auditLogService.registrar(
+                "ACTUALIZAR",
+                "TRAMO",
+                actualizado.getId(),
+                "Se actualizó el tramo desde "
+                        + actualizado.getOrigen()
+                        + " hacia "
+                        + actualizado.getDestino()
+        );
+
         return tramoMapper.toResponseDto(actualizado);
     }
 
@@ -81,6 +103,16 @@ public class TramoServiceImpl implements TramoService {
     @Transactional
     public void eliminar(Long id) {
         Tramo tramo = obtenerEntidad(id);
+
+        auditLogService.registrar(
+                "ELIMINAR",
+                "TRAMO",
+                tramo.getId(),
+                "Se eliminó el tramo desde "
+                        + tramo.getOrigen()
+                        + " hacia "
+                        + tramo.getDestino()
+        );
 
         tramoRepository.delete(tramo);
     }

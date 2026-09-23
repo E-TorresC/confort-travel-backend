@@ -2,6 +2,7 @@ package com.conforttravel.api.reserva.service.impl;
 
 import com.conforttravel.api.aerolinea.entity.Aerolinea;
 import com.conforttravel.api.aerolinea.repository.AerolineaRepository;
+import com.conforttravel.api.auditoria.service.AuditLogService;
 import com.conforttravel.api.reserva.dto.ReservaRequest;
 import com.conforttravel.api.reserva.dto.ReservaResponse;
 import com.conforttravel.api.reserva.entity.Reserva;
@@ -26,6 +27,7 @@ public class ReservaServiceImpl implements ReservaService {
     private final TramoRepository tramoRepository;
     private final AerolineaRepository aerolineaRepository;
     private final ReservaMapper reservaMapper;
+    private final AuditLogService auditLogService;
 
     @Override
     @Transactional
@@ -38,6 +40,13 @@ public class ReservaServiceImpl implements ReservaService {
         reserva.setAerolinea(aerolinea);
 
         Reserva guardada = reservaRepository.save(reserva);
+
+        auditLogService.registrar(
+                "CREAR",
+                "RESERVA",
+                guardada.getId(),
+                "Se creó la reserva: " + guardada.getCodigoReserva()
+        );
 
         return reservaMapper.toResponseDto(guardada);
     }
@@ -72,6 +81,14 @@ public class ReservaServiceImpl implements ReservaService {
 
         Reserva actualizada = reservaRepository.save(reserva);
 
+        auditLogService.registrar(
+                "ACTUALIZAR",
+                "RESERVA",
+                actualizada.getId(),
+                "Se actualizó la reserva: "
+                        + actualizada.getCodigoReserva()
+        );
+
         return reservaMapper.toResponseDto(actualizada);
     }
 
@@ -79,6 +96,14 @@ public class ReservaServiceImpl implements ReservaService {
     @Transactional
     public void eliminar(Long id) {
         Reserva reserva = obtenerEntidad(id);
+
+        auditLogService.registrar(
+                "ELIMINAR",
+                "RESERVA",
+                reserva.getId(),
+                "Se eliminó la reserva: "
+                        + reserva.getCodigoReserva()
+        );
 
         reservaRepository.delete(reserva);
     }

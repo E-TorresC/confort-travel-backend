@@ -1,5 +1,6 @@
 package com.conforttravel.api.servicio.service.impl;
 
+import com.conforttravel.api.auditoria.service.AuditLogService;
 import com.conforttravel.api.servicio.dto.ServicioAdicionalRequest;
 import com.conforttravel.api.servicio.dto.ServicioAdicionalResponse;
 import com.conforttravel.api.servicio.entity.ServicioAdicional;
@@ -21,6 +22,7 @@ public class ServicioAdicionalServiceImpl
 
     private final ServicioAdicionalRepository servicioRepository;
     private final ServicioAdicionalMapper servicioMapper;
+    private final AuditLogService auditLogService;
 
     @Override
     @Transactional
@@ -34,6 +36,13 @@ public class ServicioAdicionalServiceImpl
         }
 
         ServicioAdicional guardado = servicioRepository.save(servicio);
+
+        auditLogService.registrar(
+                "CREAR",
+                "SERVICIO_ADICIONAL",
+                guardado.getId(),
+                "Se creó el servicio adicional: " + guardado.getNombre()
+        );
 
         return servicioMapper.toResponseDto(guardado);
     }
@@ -68,6 +77,14 @@ public class ServicioAdicionalServiceImpl
 
         ServicioAdicional actualizado = servicioRepository.save(servicio);
 
+        auditLogService.registrar(
+                "ACTUALIZAR",
+                "SERVICIO_ADICIONAL",
+                actualizado.getId(),
+                "Se actualizó el servicio adicional: "
+                        + actualizado.getNombre()
+        );
+
         return servicioMapper.toResponseDto(actualizado);
     }
 
@@ -75,6 +92,14 @@ public class ServicioAdicionalServiceImpl
     @Transactional
     public void eliminar(Long id) {
         ServicioAdicional servicio = obtenerEntidad(id);
+
+        auditLogService.registrar(
+                "ELIMINAR",
+                "SERVICIO_ADICIONAL",
+                servicio.getId(),
+                "Se eliminó el servicio adicional: "
+                        + servicio.getNombre()
+        );
 
         servicioRepository.delete(servicio);
     }

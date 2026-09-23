@@ -1,5 +1,6 @@
 package com.conforttravel.api.venta.service.impl;
 
+import com.conforttravel.api.auditoria.service.AuditLogService;
 import com.conforttravel.api.cliente.entity.Cliente;
 import com.conforttravel.api.cliente.repository.ClienteRepository;
 import com.conforttravel.api.shared.dto.PageResponse;
@@ -34,6 +35,7 @@ public class VentaServiceImpl implements VentaService {
     private final UsuarioRepository usuarioRepository;
     private final VentaMapper ventaMapper;
     private final VentaSpecificationBuilder ventaSpecificationBuilder;
+    private final AuditLogService auditLogService;
 
     @Override
     @Transactional
@@ -49,6 +51,14 @@ public class VentaServiceImpl implements VentaService {
         venta.setAgente(agente);
 
         Venta guardada = ventaRepository.save(venta);
+
+        auditLogService.registrar(
+                "CREAR",
+                "VENTA",
+                guardada.getId(),
+                "Se creó la venta para el cliente: "
+                        + guardada.getCliente().getId()
+        );
 
         return ventaMapper.toResponseDto(guardada);
     }
@@ -90,6 +100,13 @@ public class VentaServiceImpl implements VentaService {
 
         Venta actualizada = ventaRepository.save(venta);
 
+        auditLogService.registrar(
+                "ACTUALIZAR",
+                "VENTA",
+                actualizada.getId(),
+                "Se actualizó la venta"
+        );
+
         return ventaMapper.toResponseDto(actualizada);
     }
 
@@ -97,6 +114,13 @@ public class VentaServiceImpl implements VentaService {
     @Transactional
     public void eliminar(Long id) {
         Venta venta = obtenerEntidad(id);
+
+        auditLogService.registrar(
+                "ELIMINAR",
+                "VENTA",
+                venta.getId(),
+                "Se eliminó la venta"
+        );
 
         ventaRepository.delete(venta);
     }

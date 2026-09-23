@@ -8,6 +8,7 @@ import com.conforttravel.api.aerolinea.mapper.AerolineaMapper;
 import com.conforttravel.api.aerolinea.repository.AerolineaRepository;
 import com.conforttravel.api.aerolinea.service.AerolineaService;
 import com.conforttravel.api.aerolinea.specification.AerolineaSpecificationBuilder;
+import com.conforttravel.api.auditoria.service.AuditLogService;
 import com.conforttravel.api.shared.dto.PageResponse;
 import com.conforttravel.api.shared.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,7 @@ public class AerolineaServiceImpl implements AerolineaService {
     private final AerolineaRepository aerolineaRepository;
     private final AerolineaMapper aerolineaMapper;
     private final AerolineaSpecificationBuilder aerolineaSpecificationBuilder;
+    private final AuditLogService auditLogService;
 
     @Override
     @Transactional
@@ -36,6 +38,13 @@ public class AerolineaServiceImpl implements AerolineaService {
         }
 
         Aerolinea guardada = aerolineaRepository.save(aerolinea);
+
+        auditLogService.registrar(
+                "CREAR",
+                "AEROLINEA",
+                guardada.getId(),
+                "Se creó la aerolínea: " + guardada.getNombre()
+        );
 
         return aerolineaMapper.toResponseDto(guardada);
     }
@@ -67,6 +76,13 @@ public class AerolineaServiceImpl implements AerolineaService {
 
         Aerolinea actualizada = aerolineaRepository.save(aerolinea);
 
+        auditLogService.registrar(
+                "ACTUALIZAR",
+                "AEROLINEA",
+                actualizada.getId(),
+                "Se actualizó la aerolínea: " + actualizada.getNombre()
+        );
+
         return aerolineaMapper.toResponseDto(actualizada);
     }
 
@@ -74,6 +90,13 @@ public class AerolineaServiceImpl implements AerolineaService {
     @Transactional
     public void eliminar(Long id) {
         Aerolinea aerolinea = obtenerEntidad(id);
+
+        auditLogService.registrar(
+                "ELIMINAR",
+                "AEROLINEA",
+                aerolinea.getId(),
+                "Se eliminó la aerolínea: " + aerolinea.getNombre()
+        );
 
         aerolineaRepository.delete(aerolinea);
     }

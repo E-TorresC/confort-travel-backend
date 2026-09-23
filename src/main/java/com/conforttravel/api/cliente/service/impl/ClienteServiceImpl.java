@@ -1,5 +1,6 @@
 package com.conforttravel.api.cliente.service.impl;
 
+import com.conforttravel.api.auditoria.service.AuditLogService;
 import com.conforttravel.api.cliente.dto.ClienteFilterRequest;
 import com.conforttravel.api.cliente.dto.ClienteRequest;
 import com.conforttravel.api.cliente.dto.ClienteResponse;
@@ -26,6 +27,7 @@ public class ClienteServiceImpl implements ClienteService {
     private final ClienteRepository clienteRepository;
     private final ClienteMapper clienteMapper;
     private final ClienteSpecificationBuilder clienteSpecificationBuilder;
+    private final AuditLogService auditLogService;
 
     @Override
     @Transactional
@@ -33,6 +35,16 @@ public class ClienteServiceImpl implements ClienteService {
         Cliente cliente = clienteMapper.toEntity(request);
 
         Cliente guardado = clienteRepository.save(cliente);
+
+        auditLogService.registrar(
+                "CREAR",
+                "CLIENTE",
+                guardado.getId(),
+                "Se creó el cliente: "
+                        + guardado.getNombres()
+                        + " "
+                        + guardado.getApellidos()
+        );
 
         return clienteMapper.toResponseDto(guardado);
     }
@@ -63,6 +75,16 @@ public class ClienteServiceImpl implements ClienteService {
 
         Cliente actualizado = clienteRepository.save(cliente);
 
+        auditLogService.registrar(
+                "ACTUALIZAR",
+                "CLIENTE",
+                actualizado.getId(),
+                "Se actualizó el cliente: "
+                        + actualizado.getNombres()
+                        + " "
+                        + actualizado.getApellidos()
+        );
+
         return clienteMapper.toResponseDto(actualizado);
     }
 
@@ -70,6 +92,16 @@ public class ClienteServiceImpl implements ClienteService {
     @Transactional
     public void eliminar(Long id) {
         Cliente cliente = obtenerEntidad(id);
+
+        auditLogService.registrar(
+                "ELIMINAR",
+                "CLIENTE",
+                cliente.getId(),
+                "Se eliminó el cliente: "
+                        + cliente.getNombres()
+                        + " "
+                        + cliente.getApellidos()
+        );
 
         clienteRepository.delete(cliente);
     }

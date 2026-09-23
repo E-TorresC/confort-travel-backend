@@ -1,5 +1,6 @@
 package com.conforttravel.api.usuario.service.impl;
 
+import com.conforttravel.api.auditoria.service.AuditLogService;
 import com.conforttravel.api.shared.exception.ResourceNotFoundException;
 import com.conforttravel.api.usuario.dto.UsuarioRequest;
 import com.conforttravel.api.usuario.dto.UsuarioResponse;
@@ -22,16 +23,13 @@ public class UsuarioServiceImpl implements UsuarioService {
     private final UsuarioRepository usuarioRepository;
     private final UsuarioMapper usuarioMapper;
     private final PasswordEncoder passwordEncoder;
+    private final AuditLogService auditLogService;
 
     @Override
     @Transactional
     public UsuarioResponse crear(UsuarioRequest request) {
         Usuario usuario = usuarioMapper.toEntity(request);
 
-        /*
-         * La gestión de passwordHash se completará junto con
-         * la configuración de seguridad/autenticación.
-         */
         usuario.setPasswordHash(passwordEncoder.encode(request.password()));
 
         if (usuario.getActivo() == null) {
@@ -39,6 +37,13 @@ public class UsuarioServiceImpl implements UsuarioService {
         }
 
         Usuario guardado = usuarioRepository.save(usuario);
+
+        auditLogService.registrar(
+                "CREAR",
+                "USUARIO",
+                guardado.getId(),
+                "Se creó el usuario: " + guardado.getEmail()
+        );
 
         return usuarioMapper.toResponseDto(guardado);
     }
@@ -79,6 +84,14 @@ public class UsuarioServiceImpl implements UsuarioService {
 
         Usuario actualizado = usuarioRepository.save(usuario);
 
+        auditLogService.registrar(
+                "ACTUALIZAR",
+                "USUARIO",
+                actualizado.getId(),
+                "Se actualizó el usuario: "
+                        + actualizado.getEmail()
+        );
+
         return usuarioMapper.toResponseDto(actualizado);
     }
 
@@ -86,6 +99,14 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Transactional
     public void eliminar(Long id) {
         Usuario usuario = obtenerEntidad(id);
+
+        auditLogService.registrar(
+                "ELIMINAR",
+                "USUARIO",
+                usuario.getId(),
+                "Se eliminó el usuario: "
+                        + usuario.getEmail()
+        );
 
         usuarioRepository.delete(usuario);
     }

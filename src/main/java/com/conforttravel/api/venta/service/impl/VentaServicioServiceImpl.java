@@ -1,5 +1,6 @@
 package com.conforttravel.api.venta.service.impl;
 
+import com.conforttravel.api.auditoria.service.AuditLogService;
 import com.conforttravel.api.servicio.entity.ServicioAdicional;
 import com.conforttravel.api.servicio.repository.ServicioAdicionalRepository;
 import com.conforttravel.api.shared.exception.BusinessException;
@@ -29,6 +30,7 @@ public class VentaServicioServiceImpl
     private final VentaRepository ventaRepository;
     private final ServicioAdicionalRepository servicioRepository;
     private final VentaServicioMapper ventaServicioMapper;
+    private final AuditLogService auditLogService;
 
     @Override
     @Transactional
@@ -78,6 +80,16 @@ public class VentaServicioServiceImpl
         VentaServicio guardado =
                 ventaServicioRepository.save(ventaServicio);
 
+        auditLogService.registrar(
+                "AGREGAR",
+                "VENTA_SERVICIO",
+                venta.getId(),
+                "Se agregó el servicio adicional "
+                        + servicio.getId()
+                        + " a la venta "
+                        + venta.getId()
+        );
+
         return ventaServicioMapper.toResponseDto(guardado);
     }
 
@@ -125,6 +137,16 @@ public class VentaServicioServiceImpl
                     "Servicio de venta no encontrado"
             );
         }
+
+        auditLogService.registrar(
+                "ELIMINAR",
+                "VENTA_SERVICIO",
+                ventaId,
+                "Se eliminó el servicio adicional "
+                        + servicioAdicionalId
+                        + " de la venta "
+                        + ventaId
+        );
 
         ventaServicioRepository.deleteById(id);
     }

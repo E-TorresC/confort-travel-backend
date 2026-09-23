@@ -1,5 +1,6 @@
 package com.conforttravel.api.checkin.service.impl;
 
+import com.conforttravel.api.auditoria.service.AuditLogService;
 import com.conforttravel.api.checkin.dto.CheckInRequest;
 import com.conforttravel.api.checkin.dto.CheckInResponse;
 import com.conforttravel.api.checkin.entity.CheckIn;
@@ -26,6 +27,7 @@ public class CheckInServiceImpl implements CheckInService {
     private final CheckInRepository checkInRepository;
     private final TramoRepository tramoRepository;
     private final CheckInMapper checkInMapper;
+    private final AuditLogService auditLogService;
 
     @Override
     public CheckInResponse crear(CheckInRequest request) {
@@ -54,9 +56,17 @@ public class CheckInServiceImpl implements CheckInService {
                 .fechaDisponible(fechaDisponible)
                 .build();
 
-        return checkInMapper.toResponseDto(
-                checkInRepository.save(checkIn)
+        CheckIn guardado = checkInRepository.save(checkIn);
+
+        auditLogService.registrar(
+                "CREAR",
+                "CHECK_IN",
+                guardado.getId(),
+                "Se creó el seguimiento de check-in para el tramo: "
+                        + guardado.getTramo().getId()
         );
+
+        return checkInMapper.toResponseDto(guardado);
     }
 
     @Override
@@ -123,9 +133,16 @@ public class CheckInServiceImpl implements CheckInService {
                 OffsetDateTime.now()
         );
 
-        return checkInMapper.toResponseDto(
-                checkInRepository.save(checkIn)
+        CheckIn actualizado = checkInRepository.save(checkIn);
+
+        auditLogService.registrar(
+                "NOTIFICAR",
+                "CHECK_IN",
+                actualizado.getId(),
+                "El check-in fue marcado como NOTIFICADO"
         );
+
+        return checkInMapper.toResponseDto(actualizado);
     }
 
     @Override
@@ -146,9 +163,16 @@ public class CheckInServiceImpl implements CheckInService {
                 OffsetDateTime.now()
         );
 
-        return checkInMapper.toResponseDto(
-                checkInRepository.save(checkIn)
+        CheckIn actualizado = checkInRepository.save(checkIn);
+
+        auditLogService.registrar(
+                "ATENDER",
+                "CHECK_IN",
+                actualizado.getId(),
+                "El check-in fue marcado como ATENDIDO"
         );
+
+        return checkInMapper.toResponseDto(actualizado);
     }
 
     private CheckIn obtenerEntidad(Long id) {

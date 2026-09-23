@@ -1,5 +1,6 @@
 package com.conforttravel.api.viaje.service.impl;
 
+import com.conforttravel.api.auditoria.service.AuditLogService;
 import com.conforttravel.api.shared.exception.ConflictException;
 import com.conforttravel.api.shared.exception.ResourceNotFoundException;
 import com.conforttravel.api.venta.entity.Venta;
@@ -24,6 +25,7 @@ public class ViajeServiceImpl implements ViajeService {
     private final ViajeRepository viajeRepository;
     private final VentaRepository ventaRepository;
     private final ViajeMapper viajeMapper;
+    private final AuditLogService auditLogService;
 
     @Override
     @Transactional
@@ -50,6 +52,14 @@ public class ViajeServiceImpl implements ViajeService {
 
         Viaje guardado = viajeRepository.save(viaje);
 
+        auditLogService.registrar(
+                "CREAR",
+                "VIAJE",
+                guardado.getId(),
+                "Se creó el viaje asociado a la venta: "
+                        + guardado.getVenta().getId()
+        );
+
         return viajeMapper.toResponseDto(guardado);
     }
 
@@ -70,6 +80,14 @@ public class ViajeServiceImpl implements ViajeService {
     @Transactional
     public void eliminar(Long id) {
         Viaje viaje = obtenerEntidad(id);
+
+        auditLogService.registrar(
+                "ELIMINAR",
+                "VIAJE",
+                viaje.getId(),
+                "Se eliminó el viaje asociado a la venta: "
+                        + viaje.getVenta().getId()
+        );
 
         viajeRepository.delete(viaje);
     }

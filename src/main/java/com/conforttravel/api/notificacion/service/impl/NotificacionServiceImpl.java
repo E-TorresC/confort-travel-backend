@@ -1,5 +1,6 @@
 package com.conforttravel.api.notificacion.service.impl;
 
+import com.conforttravel.api.auditoria.service.AuditLogService;
 import com.conforttravel.api.notificacion.dto.NotificacionResponse;
 import com.conforttravel.api.notificacion.entity.Notificacion;
 import com.conforttravel.api.notificacion.mapper.NotificacionMapper;
@@ -22,6 +23,7 @@ public class NotificacionServiceImpl implements NotificacionService {
 
     private final NotificacionRepository notificacionRepository;
     private final NotificacionMapper notificacionMapper;
+    private final AuditLogService auditLogService;
 
     @Override
     public List<NotificacionResponse> obtenerTodas() {
@@ -57,8 +59,19 @@ public class NotificacionServiceImpl implements NotificacionService {
         Notificacion notificacion = obtenerEntidad(id);
 
         if (notificacion.getFechaLectura() == null) {
-            notificacion.setFechaLectura(OffsetDateTime.now(ZoneOffset.UTC));
+
+            notificacion.setFechaLectura(
+                    OffsetDateTime.now(ZoneOffset.UTC)
+            );
+
             notificacion = notificacionRepository.save(notificacion);
+
+            auditLogService.registrar(
+                    "LEER",
+                    "NOTIFICACION",
+                    notificacion.getId(),
+                    "La notificación fue marcada como leída"
+            );
         }
 
         return notificacionMapper.toResponseDto(notificacion);
