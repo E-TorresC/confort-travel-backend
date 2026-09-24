@@ -12,6 +12,30 @@ services:
     volumes:
       - sqlserver_data:/var/opt/mssql
     restart: unless-stopped
+    networks:
+      - confort-network
+
+  backend:
+    build: .
+    container_name: confort-travel-backend-app
+    ports:
+      - "8080:8080"
+    environment:
+      # Configuramos la URL para que el backend encuentre al contenedor sqlserver en la red interna
+      - DB_URL=jdbc:sqlserver://sqlserver:1433;databaseName=confort_travel;encrypt=true;trustServerCertificate=true;
+      - DB_USERNAME=sa
+      - DB_PASSWORD=${MSSQL_SA_PASSWORD}
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_EXPIRATION=${JWT_EXPIRATION}
+    depends_on:
+      - sqlserver
+    restart: on-failure
+    networks:
+      - confort-network
 
 volumes:
   sqlserver_data:
+
+networks:
+  confort-network:
+    driver: bridge
