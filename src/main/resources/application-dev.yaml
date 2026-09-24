@@ -27,3 +27,16 @@ confort:
     scheduler:
       check-in:
         fixed-delay-ms: 10000
+
+# Configuración de Actuator (Monitoreo)
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "health,info,metrics,mappings,env"
+  endpoint:
+    health:
+      show-details: always
+  info:
+    env:
+      enabled: true
