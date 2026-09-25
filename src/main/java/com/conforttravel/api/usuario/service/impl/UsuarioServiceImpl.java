@@ -1,14 +1,18 @@
 package com.conforttravel.api.usuario.service.impl;
 
 import com.conforttravel.api.auditoria.service.AuditLogService;
+import com.conforttravel.api.shared.dto.PageResponse;
 import com.conforttravel.api.shared.exception.ResourceNotFoundException;
+import com.conforttravel.api.usuario.dto.UsuarioFilterRequest;
 import com.conforttravel.api.usuario.dto.UsuarioRequest;
 import com.conforttravel.api.usuario.dto.UsuarioResponse;
 import com.conforttravel.api.usuario.entity.Usuario;
 import com.conforttravel.api.usuario.mapper.UsuarioMapper;
 import com.conforttravel.api.usuario.repository.UsuarioRepository;
 import com.conforttravel.api.usuario.service.UsuarioService;
+import com.conforttravel.api.usuario.specification.UsuarioSpecificationBuilder;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +28,7 @@ public class UsuarioServiceImpl implements UsuarioService {
     private final UsuarioMapper usuarioMapper;
     private final PasswordEncoder passwordEncoder;
     private final AuditLogService auditLogService;
+    private final UsuarioSpecificationBuilder usuarioSpecificationBuilder;
 
     @Override
     @Transactional
@@ -109,6 +114,21 @@ public class UsuarioServiceImpl implements UsuarioService {
         );
 
         usuarioRepository.delete(usuario);
+    }
+
+    @Override
+    public PageResponse<UsuarioResponse> buscar(
+            UsuarioFilterRequest filter,
+            Pageable pageable
+    ) {
+        return PageResponse.from(
+                usuarioRepository
+                        .findAll(
+                                usuarioSpecificationBuilder.build(filter),
+                                pageable
+                        )
+                        .map(usuarioMapper::toResponseDto)
+        );
     }
 
     private Usuario obtenerEntidad(Long id) {

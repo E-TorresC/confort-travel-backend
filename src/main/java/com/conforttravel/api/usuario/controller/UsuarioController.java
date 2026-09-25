@@ -1,10 +1,13 @@
 package com.conforttravel.api.usuario.controller;
 
+import com.conforttravel.api.shared.dto.PageResponse;
+import com.conforttravel.api.usuario.dto.UsuarioFilterRequest;
 import com.conforttravel.api.usuario.dto.UsuarioRequest;
 import com.conforttravel.api.usuario.dto.UsuarioResponse;
 import com.conforttravel.api.usuario.service.UsuarioService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -62,5 +65,33 @@ public class UsuarioController {
         usuarioService.eliminar(id);
 
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/page")
+    public ResponseEntity<PageResponse<UsuarioResponse>> buscar(
+
+            @RequestParam(required = false) String nombre,
+
+            @RequestParam(required = false) String apellido,
+
+            @RequestParam(required = false) String email,
+
+            @RequestParam(required = false) Boolean activo,
+
+            Pageable pageable
+
+    ) {
+
+        UsuarioFilterRequest filter =
+                new UsuarioFilterRequest(
+                        nombre,
+                        apellido,
+                        email,
+                        activo
+                );
+
+        return ResponseEntity.ok(
+                usuarioService.buscar(filter, pageable)
+        );
     }
 }
