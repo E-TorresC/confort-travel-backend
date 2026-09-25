@@ -117,35 +117,6 @@ public class CheckInServiceImpl implements CheckInService {
     }
 
     @Override
-    public CheckInResponse marcarNotificado(Long id) {
-
-        CheckIn checkIn = obtenerEntidad(id);
-
-        if (checkIn.getEstado() != EstadoCheckIn.PENDIENTE) {
-
-            throw new ConflictException(
-                    "El check-in no se encuentra en estado PENDIENTE"
-            );
-        }
-
-        checkIn.setEstado(EstadoCheckIn.NOTIFICADO);
-        checkIn.setFechaNotificacion(
-                OffsetDateTime.now()
-        );
-
-        CheckIn actualizado = checkInRepository.save(checkIn);
-
-        auditLogService.registrar(
-                "NOTIFICAR",
-                "CHECK_IN",
-                actualizado.getId(),
-                "El check-in fue marcado como NOTIFICADO"
-        );
-
-        return checkInMapper.toResponseDto(actualizado);
-    }
-
-    @Override
     public CheckInResponse marcarAtendido(Long id) {
 
         CheckIn checkIn = obtenerEntidad(id);

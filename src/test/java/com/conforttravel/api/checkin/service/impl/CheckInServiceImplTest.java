@@ -49,36 +49,6 @@ class CheckInServiceImplTest {
     }
 
     @Test
-    void marcarNotificado_CuandoEstadoEsPendiente_Exito() {
-        // Arrange
-        when(checkInRepository.findById(1L)).thenReturn(Optional.of(checkIn));
-        when(checkInRepository.save(any(CheckIn.class))).thenReturn(checkIn);
-        when(checkInMapper.toResponseDto(any(CheckIn.class))).thenReturn(
-                new CheckInResponse(1L, EstadoCheckIn.NOTIFICADO, null, OffsetDateTime.now(), null, 1L)
-        );
-
-        // Act
-        CheckInResponse response = checkInService.marcarNotificado(1L);
-
-        // Assert
-        assertEquals(EstadoCheckIn.NOTIFICADO, checkIn.getEstado());
-        assertNotNull(checkIn.getFechaNotificacion());
-        verify(auditLogService, times(1)).registrar(eq("NOTIFICAR"), eq("CHECK_IN"), eq(1L), anyString());
-    }
-
-    @Test
-    void marcarNotificado_CuandoEstadoNoEsPendiente_LanzaConflictException() {
-        // Arrange
-        checkIn.setEstado(EstadoCheckIn.NOTIFICADO);
-        when(checkInRepository.findById(1L)).thenReturn(Optional.of(checkIn));
-
-        // Act & Assert
-        ConflictException exception = assertThrows(ConflictException.class, () -> checkInService.marcarNotificado(1L));
-        assertEquals("El check-in no se encuentra en estado PENDIENTE", exception.getMessage());
-        verify(checkInRepository, never()).save(any());
-    }
-
-    @Test
     void marcarAtendido_CuandoEstadoEsNotificado_Exito() {
         // Arrange
         checkIn.setEstado(EstadoCheckIn.NOTIFICADO);

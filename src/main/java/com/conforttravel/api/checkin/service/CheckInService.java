@@ -22,7 +22,5 @@ public interface CheckInService {
             EstadoCheckIn estado
     );
 
-    CheckInResponse marcarNotificado(Long id);
-
     CheckInResponse marcarAtendido(Long id);
 }

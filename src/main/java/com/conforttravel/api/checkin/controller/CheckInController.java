@@ -50,15 +50,6 @@ public class CheckInController {
         );
     }
 
-    @PatchMapping("/{id}/notificar")
-    public ResponseEntity<CheckInResponse> marcarNotificado(
-            @PathVariable Long id
-    ) {
-        return ResponseEntity.ok(
-                checkInService.marcarNotificado(id)
-        );
-    }
-
     @PatchMapping("/{id}/atender")
     public ResponseEntity<CheckInResponse> marcarAtendido(
             @PathVariable Long id
