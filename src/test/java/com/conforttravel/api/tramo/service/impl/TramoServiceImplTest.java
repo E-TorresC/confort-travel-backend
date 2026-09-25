@@ -1,6 +1,8 @@
 package com.conforttravel.api.tramo.service.impl;
 
 import com.conforttravel.api.auditoria.service.AuditLogService;
+import com.conforttravel.api.checkin.dto.CheckInRequest;
+import com.conforttravel.api.checkin.service.CheckInService;
 import com.conforttravel.api.shared.exception.BusinessException;
 import com.conforttravel.api.tramo.dto.TramoRequest;
 import com.conforttravel.api.tramo.dto.TramoResponse;
@@ -35,6 +37,8 @@ class TramoServiceImplTest {
     private TramoMapper tramoMapper;
     @Mock
     private AuditLogService auditLogService;
+    @Mock
+    private CheckInService checkInService;
 
     @InjectMocks
     private TramoServiceImpl tramoService;
@@ -43,7 +47,7 @@ class TramoServiceImplTest {
     void crearTramo_Exito_FechasValidas() {
         // Arrange
         OffsetDateTime salida = OffsetDateTime.now().plusDays(1);
-        OffsetDateTime llegada = salida.plusHours(5); // Llegada válida (después de la salida)
+        OffsetDateTime llegada = salida.plusHours(5);
 
         TramoRequest request = new TramoRequest(
                 TipoTramo.IDA, TipoViaje.INTERNACIONAL, "LIM", "MIA",
@@ -77,13 +81,14 @@ class TramoServiceImplTest {
         assertEquals("LIM", response.origen());
         verify(tramoRepository, times(1)).save(any(Tramo.class));
         verify(auditLogService, times(1)).registrar(eq("CREAR"), eq("TRAMO"), eq(10L), anyString());
+        verify(checkInService, times(1)).crear(any(CheckInRequest.class));
     }
 
     @Test
     void crearTramo_LanzaBusinessException_CuandoLlegadaEsAnteriorASalida() {
         // Arrange
         OffsetDateTime salida = OffsetDateTime.now().plusDays(1);
-        OffsetDateTime llegadaInvalida = salida.minusHours(2); // Llegada antes que la salida
+        OffsetDateTime llegadaInvalida = salida.minusHours(2);
 
         TramoRequest request = new TramoRequest(
                 TipoTramo.IDA, TipoViaje.INTERNACIONAL, "LIM", "MIA",
@@ -97,5 +102,6 @@ class TramoServiceImplTest {
         verify(viajeRepository, never()).findById(anyLong());
         verify(tramoRepository, never()).save(any());
         verify(auditLogService, never()).registrar(anyString(), anyString(), anyLong(), anyString());
+        verify(checkInService, never()).crear(any());
     }
 }

@@ -1,6 +1,8 @@
 package com.conforttravel.api.tramo.service.impl;
 
 import com.conforttravel.api.auditoria.service.AuditLogService;
+import com.conforttravel.api.checkin.dto.CheckInRequest;
+import com.conforttravel.api.checkin.service.CheckInService;
 import com.conforttravel.api.shared.exception.BusinessException;
 import com.conforttravel.api.shared.exception.ResourceNotFoundException;
 import com.conforttravel.api.tramo.dto.TramoRequest;
@@ -26,6 +28,7 @@ public class TramoServiceImpl implements TramoService {
     private final ViajeRepository viajeRepository;
     private final TramoMapper tramoMapper;
     private final AuditLogService auditLogService;
+    private final CheckInService checkInService;
 
     @Override
     @Transactional
@@ -48,6 +51,9 @@ public class TramoServiceImpl implements TramoService {
                         + " hacia "
                         + guardado.getDestino()
         );
+
+        // Crear automáticamente el seguimiento de Check-in (Estado PENDIENTE)
+        checkInService.crear(new CheckInRequest(guardado.getId()));
 
         return tramoMapper.toResponseDto(guardado);
     }
