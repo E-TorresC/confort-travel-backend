@@ -8,13 +8,11 @@ import com.conforttravel.api.notificacion.entity.Notificacion;
 import com.conforttravel.api.notificacion.entity.TipoNotificacion;
 import com.conforttravel.api.notificacion.repository.NotificacionRepository;
 import com.conforttravel.api.usuario.entity.Usuario;
-import com.conforttravel.api.usuario.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
@@ -27,7 +25,6 @@ public class CheckInNotificationServiceImpl
 
     private final CheckInRepository checkInRepository;
     private final NotificacionRepository notificacionRepository;
-    private final UsuarioRepository usuarioRepository;
 
     @Override
     @Transactional
@@ -49,15 +46,13 @@ public class CheckInNotificationServiceImpl
             return;
         }
 
-        Usuario usuario = obtenerUsuarioNotificacion();
-
         for (CheckIn checkIn : checkInsDisponibles) {
 
             if (checkIn.getEstado() != EstadoCheckIn.PENDIENTE) {
                 continue;
             }
 
-            crearNotificacion(checkIn, usuario);
+            crearNotificacion(checkIn);
 
             checkIn.setEstado(EstadoCheckIn.NOTIFICADO);
             checkIn.setFechaNotificacion(ahora);
@@ -65,17 +60,17 @@ public class CheckInNotificationServiceImpl
             checkInRepository.save(checkIn);
 
             log.info(
-                    "Check-in {} notificado automáticamente. Tramo: {}",
+                    "Check-in {} notificado automáticamente al agente responsable. Tramo: {}",
                     checkIn.getId(),
                     checkIn.getTramo().getId()
             );
         }
     }
 
-    private void crearNotificacion(
-            CheckIn checkIn,
-            Usuario usuario
-    ) {
+    private void crearNotificacion(CheckIn checkIn) {
+
+        // Navegamos por el modelo de dominio para obtener el agente que realizó la venta
+        Usuario agenteResponsable = checkIn.getTramo().getViaje().getVenta().getAgente();
 
         Notificacion notificacion = Notificacion.builder()
                 .tipo(TipoNotificacion.CHECK_IN_DISPONIBLE)
@@ -85,21 +80,10 @@ public class CheckInNotificationServiceImpl
                                 + " ya se encuentra disponible."
                 )
                 .fechaCreacion(OffsetDateTime.now(ZoneOffset.UTC))
-                .usuario(usuario)
+                .usuario(agenteResponsable)
                 .checkIn(checkIn)
                 .build();
 
         notificacionRepository.save(notificacion);
-    }
-
-    private Usuario obtenerUsuarioNotificacion() {
-
-        return usuarioRepository.findFirstByActivoTrueOrderByIdAsc()
-                .orElseThrow(() ->
-                        new IllegalStateException(
-                                "No existe un usuario activo para recibir "
-                                        + "notificaciones de check-in"
-                        )
-                );
     }
 }
