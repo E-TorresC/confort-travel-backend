@@ -9,12 +9,40 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
 
 import java.time.OffsetDateTime;
 import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<ApiErrorResponse> handleBadCredentials(
+            BadCredentialsException exception,
+            HttpServletRequest request
+    ) {
+        return buildResponse(
+                HttpStatus.UNAUTHORIZED,
+                "INVALID_CREDENTIALS",
+                "Credenciales inválidas",
+                request.getRequestURI()
+        );
+    }
+
+    @ExceptionHandler(DisabledException.class)
+    public ResponseEntity<ApiErrorResponse> handleDisabledException(
+            DisabledException exception,
+            HttpServletRequest request
+    ) {
+        return buildResponse(
+                HttpStatus.FORBIDDEN,
+                "USER_DISABLED",
+                "El usuario se encuentra inactivo o deshabilitado",
+                request.getRequestURI()
+        );
+    }
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ApiErrorResponse> handleResourceNotFound(
