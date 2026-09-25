@@ -1,17 +1,14 @@
 package com.conforttravel.api.auditoria.controller;
 
 import com.conforttravel.api.auditoria.dto.AuditLogFilterRequest;
-import com.conforttravel.api.auditoria.dto.AuditLogRequest;
 import com.conforttravel.api.auditoria.dto.AuditLogResponse;
 import com.conforttravel.api.auditoria.service.AuditLogService;
 import com.conforttravel.api.shared.dto.PageResponse;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -25,15 +22,6 @@ import java.time.OffsetDateTime;
 public class AuditLogController {
 
     private final AuditLogService auditLogService;
-
-    @PostMapping
-    public ResponseEntity<AuditLogResponse> registrar(
-            @Valid @RequestBody AuditLogRequest request
-    ) {
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(auditLogService.registrar(request));
-    }
 
     @GetMapping("/page")
     public ResponseEntity<PageResponse<AuditLogResponse>> buscar(

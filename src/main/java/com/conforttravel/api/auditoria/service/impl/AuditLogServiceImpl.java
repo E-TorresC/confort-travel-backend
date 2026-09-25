@@ -1,7 +1,6 @@
 package com.conforttravel.api.auditoria.service.impl;
 
 import com.conforttravel.api.auditoria.dto.AuditLogFilterRequest;
-import com.conforttravel.api.auditoria.dto.AuditLogRequest;
 import com.conforttravel.api.auditoria.dto.AuditLogResponse;
 import com.conforttravel.api.auditoria.entity.AuditLog;
 import com.conforttravel.api.auditoria.repository.AuditLogRepository;
@@ -29,16 +28,16 @@ public class AuditLogServiceImpl implements AuditLogService {
 
     @Override
     @Transactional
-    public AuditLogResponse registrar(AuditLogRequest request) {
+    public AuditLogResponse registrar(String accion, String entidad, Long entidadId, String detalle) {
 
         Usuario usuario = obtenerUsuarioAutenticado();
 
         AuditLog auditLog = AuditLog.builder()
                 .usuario(usuario)
-                .accion(request.accion())
-                .entidad(request.entidad())
-                .entidadId(request.entidadId())
-                .detalle(request.detalle())
+                .accion(accion)
+                .entidad(entidad)
+                .entidadId(entidadId)
+                .detalle(detalle)
                 .build();
 
         AuditLog guardado = auditLogRepository.save(auditLog);
