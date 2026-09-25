@@ -2,6 +2,8 @@ package com.conforttravel.api.checkin.repository;
 
 import com.conforttravel.api.checkin.entity.CheckIn;
 import com.conforttravel.api.checkin.entity.EstadoCheckIn;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.OffsetDateTime;
@@ -16,6 +18,12 @@ public interface CheckInRepository extends JpaRepository<CheckIn, Long> {
 
     List<CheckIn> findByEstado(
             EstadoCheckIn estado
+    );
+
+    // Método agregado para soportar paginación por estado
+    Page<CheckIn> findByEstado(
+            EstadoCheckIn estado,
+            Pageable pageable
     );
 
     List<CheckIn> findByEstadoAndFechaDisponibleLessThanEqual(

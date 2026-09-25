@@ -8,11 +8,14 @@ import com.conforttravel.api.checkin.entity.EstadoCheckIn;
 import com.conforttravel.api.checkin.mapper.CheckInMapper;
 import com.conforttravel.api.checkin.repository.CheckInRepository;
 import com.conforttravel.api.checkin.service.CheckInService;
+import com.conforttravel.api.shared.dto.PageResponse;
 import com.conforttravel.api.shared.exception.ConflictException;
 import com.conforttravel.api.shared.exception.ResourceNotFoundException;
 import com.conforttravel.api.tramo.entity.Tramo;
 import com.conforttravel.api.tramo.repository.TramoRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -114,6 +117,21 @@ public class CheckInServiceImpl implements CheckInService {
                 .stream()
                 .map(checkInMapper::toResponseDto)
                 .toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public PageResponse<CheckInResponse> buscar(
+            EstadoCheckIn estado,
+            Pageable pageable
+    ) {
+        Page<CheckIn> page = (estado != null)
+                ? checkInRepository.findByEstado(estado, pageable)
+                : checkInRepository.findAll(pageable);
+
+        return PageResponse.from(
+                page.map(checkInMapper::toResponseDto)
+        );
     }
 
     @Override

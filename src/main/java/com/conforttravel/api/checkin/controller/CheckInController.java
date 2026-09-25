@@ -3,7 +3,9 @@ package com.conforttravel.api.checkin.controller;
 import com.conforttravel.api.checkin.dto.CheckInResponse;
 import com.conforttravel.api.checkin.entity.EstadoCheckIn;
 import com.conforttravel.api.checkin.service.CheckInService;
+import com.conforttravel.api.shared.dto.PageResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -47,6 +49,16 @@ public class CheckInController {
     ) {
         return ResponseEntity.ok(
                 checkInService.obtenerPorEstado(estado)
+        );
+    }
+
+    @GetMapping("/page")
+    public ResponseEntity<PageResponse<CheckInResponse>> buscar(
+            @RequestParam(required = false) EstadoCheckIn estado,
+            Pageable pageable
+    ) {
+        return ResponseEntity.ok(
+                checkInService.buscar(estado, pageable)
         );
     }
 
