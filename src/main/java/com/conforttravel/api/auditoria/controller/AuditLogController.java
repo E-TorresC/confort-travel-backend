@@ -3,9 +3,9 @@ package com.conforttravel.api.auditoria.controller;
 import com.conforttravel.api.auditoria.dto.AuditLogRequest;
 import com.conforttravel.api.auditoria.dto.AuditLogResponse;
 import com.conforttravel.api.auditoria.service.AuditLogService;
+import com.conforttravel.api.shared.dto.PageResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
@@ -32,7 +32,7 @@ public class AuditLogController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<AuditLogResponse>> listar(
+    public ResponseEntity<PageResponse<AuditLogResponse>> listar(
             @PageableDefault(
                     size = 10,
                     sort = "fecha"
@@ -46,7 +46,7 @@ public class AuditLogController {
     }
 
     @GetMapping("/usuario/{usuarioId}")
-    public ResponseEntity<Page<AuditLogResponse>> listarPorUsuario(
+    public ResponseEntity<PageResponse<AuditLogResponse>> listarPorUsuario(
             @PathVariable Long usuarioId,
             @PageableDefault(
                     size = 10,
@@ -64,7 +64,7 @@ public class AuditLogController {
     }
 
     @GetMapping("/entidad/{entidad}")
-    public ResponseEntity<Page<AuditLogResponse>> listarPorEntidad(
+    public ResponseEntity<PageResponse<AuditLogResponse>> listarPorEntidad(
             @PathVariable String entidad,
             @PageableDefault(
                     size = 10,
@@ -82,7 +82,7 @@ public class AuditLogController {
     }
 
     @GetMapping("/accion/{accion}")
-    public ResponseEntity<Page<AuditLogResponse>> listarPorAccion(
+    public ResponseEntity<PageResponse<AuditLogResponse>> listarPorAccion(
             @PathVariable String accion,
             @PageableDefault(
                     size = 10,

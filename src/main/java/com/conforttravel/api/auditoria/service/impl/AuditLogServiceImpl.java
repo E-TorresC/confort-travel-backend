@@ -5,11 +5,11 @@ import com.conforttravel.api.auditoria.dto.AuditLogResponse;
 import com.conforttravel.api.auditoria.entity.AuditLog;
 import com.conforttravel.api.auditoria.repository.AuditLogRepository;
 import com.conforttravel.api.auditoria.service.AuditLogService;
+import com.conforttravel.api.shared.dto.PageResponse;
 import com.conforttravel.api.usuario.entity.Usuario;
 import com.conforttravel.api.usuario.repository.UsuarioRepository;
 import com.conforttravel.api.shared.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -44,44 +44,52 @@ public class AuditLogServiceImpl implements AuditLogService {
     }
 
     @Override
-    public Page<AuditLogResponse> listar(Pageable pageable) {
+    public PageResponse<AuditLogResponse> listar(Pageable pageable) {
 
-        return auditLogRepository
-                .findAll(pageable)
-                .map(this::toResponse);
+        return PageResponse.from(
+                auditLogRepository
+                        .findAll(pageable)
+                        .map(this::toResponse)
+        );
     }
 
     @Override
-    public Page<AuditLogResponse> listarPorUsuario(
+    public PageResponse<AuditLogResponse> listarPorUsuario(
             Long usuarioId,
             Pageable pageable
     ) {
 
-        return auditLogRepository
-                .findByUsuarioId(usuarioId, pageable)
-                .map(this::toResponse);
+        return PageResponse.from(
+                auditLogRepository
+                        .findByUsuarioId(usuarioId, pageable)
+                        .map(this::toResponse)
+        );
     }
 
     @Override
-    public Page<AuditLogResponse> listarPorEntidad(
+    public PageResponse<AuditLogResponse> listarPorEntidad(
             String entidad,
             Pageable pageable
     ) {
 
-        return auditLogRepository
-                .findByEntidadIgnoreCase(entidad, pageable)
-                .map(this::toResponse);
+        return PageResponse.from(
+                auditLogRepository
+                        .findByEntidadIgnoreCase(entidad, pageable)
+                        .map(this::toResponse)
+        );
     }
 
     @Override
-    public Page<AuditLogResponse> listarPorAccion(
+    public PageResponse<AuditLogResponse> listarPorAccion(
             String accion,
             Pageable pageable
     ) {
 
-        return auditLogRepository
-                .findByAccionIgnoreCase(accion, pageable)
-                .map(this::toResponse);
+        return PageResponse.from(
+                auditLogRepository
+                        .findByAccionIgnoreCase(accion, pageable)
+                        .map(this::toResponse)
+        );
     }
 
     private Usuario obtenerUsuarioAutenticado() {

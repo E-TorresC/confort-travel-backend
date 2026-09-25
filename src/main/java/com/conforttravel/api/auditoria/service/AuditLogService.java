@@ -2,7 +2,7 @@ package com.conforttravel.api.auditoria.service;
 
 import com.conforttravel.api.auditoria.dto.AuditLogRequest;
 import com.conforttravel.api.auditoria.dto.AuditLogResponse;
-import org.springframework.data.domain.Page;
+import com.conforttravel.api.shared.dto.PageResponse;
 import org.springframework.data.domain.Pageable;
 
 public interface AuditLogService {
@@ -26,19 +26,19 @@ public interface AuditLogService {
         );
     }
 
-    Page<AuditLogResponse> listar(Pageable pageable);
+    PageResponse<AuditLogResponse> listar(Pageable pageable);
 
-    Page<AuditLogResponse> listarPorUsuario(
+    PageResponse<AuditLogResponse> listarPorUsuario(
             Long usuarioId,
             Pageable pageable
     );
 
-    Page<AuditLogResponse> listarPorEntidad(
+    PageResponse<AuditLogResponse> listarPorEntidad(
             String entidad,
             Pageable pageable
     );
 
-    Page<AuditLogResponse> listarPorAccion(
+    PageResponse<AuditLogResponse> listarPorAccion(
             String accion,
             Pageable pageable
     );
