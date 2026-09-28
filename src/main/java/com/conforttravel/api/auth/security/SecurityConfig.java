@@ -48,27 +48,20 @@ public class SecurityConfig {
                                 "/api/auth/**"
                         ).permitAll()
 
-                        // Documentación
+                        // Documentación y Actuator (Solo health e info son públicos)
                         .requestMatchers(
                                 "/swagger-ui/**",
                                 "/swagger-ui.html",
                                 "/v3/api-docs/**",
                                 "/actuator/health",
                                 "/actuator/health/**",
-                                "/actuator/info",
-                                "/actuator/mappings",
-                                "/actuator/metrics"
+                                "/actuator/info"
                         ).permitAll()
 
-                        // Resto de endpoints
+                        // Resto de endpoints (incluyendo otros de actuator como env o metrics)
                         .anyRequest()
                         .authenticated()
                 )
-
-/*                // ⚠️ TEMPORAL: permite todo sin autenticación
-                .authorizeHttpRequests(auth -> auth
-                        .anyRequest().permitAll()
-                )*/
 
                 .exceptionHandling(exception ->
                         exception
