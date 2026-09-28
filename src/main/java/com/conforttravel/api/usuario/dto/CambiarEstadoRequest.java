@@ -5,6 +5,9 @@ import jakarta.validation.constraints.NotNull;
 public record CambiarEstadoRequest(
 
         @NotNull(message = "El estado es obligatorio")
-        Boolean activo
+        Boolean activo,
+
+        @NotNull(message = "La versión es obligatoria para actualizar")
+        Long version
 ) {
 }

@@ -73,6 +73,7 @@ public class UsuarioServiceImpl implements UsuarioService {
         usuario.setApellido(request.apellido());
         usuario.setEmail(request.email());
         usuario.setRol(request.rol());
+        usuario.setVersion(request.version());
 
         if (request.activo() != null) {
             usuario.setActivo(request.activo());
@@ -96,6 +97,7 @@ public class UsuarioServiceImpl implements UsuarioService {
         Usuario usuario = obtenerEntidad(id);
 
         usuario.setPasswordHash(passwordEncoder.encode(request.password()));
+        usuario.setVersion(request.version());
 
         Usuario actualizado = usuarioRepository.save(usuario);
 
@@ -115,6 +117,7 @@ public class UsuarioServiceImpl implements UsuarioService {
         Usuario usuario = obtenerEntidad(id);
 
         usuario.setActivo(request.activo());
+        usuario.setVersion(request.version());
 
         Usuario actualizado = usuarioRepository.save(usuario);
 

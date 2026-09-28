@@ -66,7 +66,7 @@ class VentaServiceImplTest {
                 new BigDecimal("500.00"),
                 new BigDecimal("650.00"),
                 "Sin observaciones",
-                1, 0, 1L, 1L
+                1, 0, 1L, 1L, null
         );
 
         Cliente cliente = new Cliente();
@@ -112,7 +112,7 @@ class VentaServiceImplTest {
                 new BigDecimal("650.00"),
                 new BigDecimal("500.00"),
                 "Sin observaciones",
-                1, 0, 1L, 1L
+                1, 0, 1L, 1L, null
         );
 
         // Act & Assert
@@ -140,7 +140,7 @@ class VentaServiceImplTest {
                 new BigDecimal("500.00"),
                 new BigDecimal("650.00"),
                 "Sin observaciones",
-                1, 0, 1L, 1L
+                1, 0, 1L, 1L, null
         );
 
         Cliente cliente = new Cliente();
@@ -175,7 +175,7 @@ class VentaServiceImplTest {
                 new BigDecimal("500.00"),
                 new BigDecimal("650.00"),
                 "Sin observaciones",
-                1, 0, 1L, 1L
+                1, 0, 1L, 1L, null
         );
 
         Cliente cliente = new Cliente();

@@ -24,6 +24,9 @@ public record UsuarioUpdateRequest(
         @NotNull(message = "El rol es obligatorio")
         Rol rol,
 
-        Boolean activo
+        Boolean activo,
+
+        @NotNull(message = "La versión es obligatoria para actualizar")
+                Long version
 ) {
 }

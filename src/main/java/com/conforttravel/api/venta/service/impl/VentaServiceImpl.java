@@ -99,6 +99,11 @@ public class VentaServiceImpl implements VentaService {
         venta.setCliente(cliente);
         venta.setAgente(agente);
 
+        // Control de concurrencia: asignar versión enviada por el frontend
+        if (request.version() != null) {
+            venta.setVersion(request.version());
+        }
+
         Venta actualizada = ventaRepository.save(venta);
 
         auditLogService.registrar(
