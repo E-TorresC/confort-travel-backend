@@ -30,7 +30,7 @@ public class CheckInNotificationServiceImpl
     @Transactional
     public void procesarCheckInsDisponibles() {
 
-        OffsetDateTime ahora = OffsetDateTime.now();
+        OffsetDateTime ahora = OffsetDateTime.now(ZoneOffset.UTC);
 
         List<CheckIn> checkInsDisponibles =
                 checkInRepository

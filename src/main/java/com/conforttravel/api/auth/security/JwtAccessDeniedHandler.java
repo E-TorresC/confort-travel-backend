@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 
 @Component
 public class JwtAccessDeniedHandler
@@ -32,7 +33,7 @@ public class JwtAccessDeniedHandler
 
         ApiErrorResponse errorResponse =
                 new ApiErrorResponse(
-                        OffsetDateTime.now(),
+                        OffsetDateTime.now(ZoneOffset.UTC),
                         HttpStatus.FORBIDDEN.value(),
                         "FORBIDDEN",
                         "No tienes permisos suficientes para acceder a este recurso",

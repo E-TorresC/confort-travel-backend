@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 
 @Service
@@ -149,7 +150,7 @@ public class CheckInServiceImpl implements CheckInService {
 
         checkIn.setEstado(EstadoCheckIn.ATENDIDO);
         checkIn.setFechaAtencion(
-                OffsetDateTime.now()
+                OffsetDateTime.now(ZoneOffset.UTC)
         );
 
         CheckIn actualizado = checkInRepository.save(checkIn);

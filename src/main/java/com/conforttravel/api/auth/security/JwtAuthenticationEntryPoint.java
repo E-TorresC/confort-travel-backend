@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 
 @Component
 public class JwtAuthenticationEntryPoint
@@ -32,7 +33,7 @@ public class JwtAuthenticationEntryPoint
 
         ApiErrorResponse errorResponse =
                 new ApiErrorResponse(
-                        OffsetDateTime.now(),
+                        OffsetDateTime.now(ZoneOffset.UTC),
                         HttpStatus.UNAUTHORIZED.value(),
                         "UNAUTHORIZED",
                         "La autenticación es requerida o el token JWT no es válido",
