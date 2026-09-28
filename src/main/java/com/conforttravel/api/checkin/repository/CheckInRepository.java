@@ -30,4 +30,7 @@ public interface CheckInRepository extends JpaRepository<CheckIn, Long> {
             EstadoCheckIn estado,
             OffsetDateTime fecha
     );
+
+    // Método para conteo eficiente en el Dashboard
+    long countByEstado(EstadoCheckIn estado);
 }
