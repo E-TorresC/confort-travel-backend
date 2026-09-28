@@ -3,9 +3,7 @@ package com.conforttravel.api.usuario.service.impl;
 import com.conforttravel.api.auditoria.service.AuditLogService;
 import com.conforttravel.api.shared.dto.PageResponse;
 import com.conforttravel.api.shared.exception.ResourceNotFoundException;
-import com.conforttravel.api.usuario.dto.UsuarioFilterRequest;
-import com.conforttravel.api.usuario.dto.UsuarioRequest;
-import com.conforttravel.api.usuario.dto.UsuarioResponse;
+import com.conforttravel.api.usuario.dto.*;
 import com.conforttravel.api.usuario.entity.Usuario;
 import com.conforttravel.api.usuario.mapper.UsuarioMapper;
 import com.conforttravel.api.usuario.repository.UsuarioRepository;
@@ -32,7 +30,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Override
     @Transactional
-    public UsuarioResponse crear(UsuarioRequest request) {
+    public UsuarioResponse crear(UsuarioCreateRequest request) {
         Usuario usuario = usuarioMapper.toEntity(request);
 
         usuario.setPasswordHash(passwordEncoder.encode(request.password()));
@@ -68,10 +66,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Override
     @Transactional
-    public UsuarioResponse actualizar(
-            Long id,
-            UsuarioRequest request
-    ) {
+    public UsuarioResponse actualizar(Long id, UsuarioUpdateRequest request) {
         Usuario usuario = obtenerEntidad(id);
 
         usuario.setNombre(request.nombre());
@@ -83,18 +78,51 @@ public class UsuarioServiceImpl implements UsuarioService {
             usuario.setActivo(request.activo());
         }
 
-        usuario.setPasswordHash(
-                passwordEncoder.encode(request.password())
-        );
-
         Usuario actualizado = usuarioRepository.save(usuario);
 
         auditLogService.registrar(
                 "ACTUALIZAR",
                 "USUARIO",
                 actualizado.getId(),
-                "Se actualizó el usuario: "
-                        + actualizado.getEmail()
+                "Se actualizaron los datos del usuario: " + actualizado.getEmail()
+        );
+
+        return usuarioMapper.toResponseDto(actualizado);
+    }
+
+    @Override
+    @Transactional
+    public UsuarioResponse cambiarPassword(Long id, CambiarPasswordRequest request) {
+        Usuario usuario = obtenerEntidad(id);
+
+        usuario.setPasswordHash(passwordEncoder.encode(request.password()));
+
+        Usuario actualizado = usuarioRepository.save(usuario);
+
+        auditLogService.registrar(
+                "ACTUALIZAR_PASSWORD",
+                "USUARIO",
+                actualizado.getId(),
+                "Se cambió la contraseña del usuario: " + actualizado.getEmail()
+        );
+
+        return usuarioMapper.toResponseDto(actualizado);
+    }
+
+    @Override
+    @Transactional
+    public UsuarioResponse cambiarEstado(Long id, CambiarEstadoRequest request) {
+        Usuario usuario = obtenerEntidad(id);
+
+        usuario.setActivo(request.activo());
+
+        Usuario actualizado = usuarioRepository.save(usuario);
+
+        auditLogService.registrar(
+                "CAMBIAR_ESTADO",
+                "USUARIO",
+                actualizado.getId(),
+                "Se actualizó el estado del usuario a " + (actualizado.getActivo() ? "ACTIVO" : "INACTIVO") + ": " + actualizado.getEmail()
         );
 
         return usuarioMapper.toResponseDto(actualizado);
@@ -109,8 +137,7 @@ public class UsuarioServiceImpl implements UsuarioService {
                 "ELIMINAR",
                 "USUARIO",
                 usuario.getId(),
-                "Se eliminó el usuario: "
-                        + usuario.getEmail()
+                "Se eliminó el usuario: " + usuario.getEmail()
         );
 
         usuarioRepository.delete(usuario);

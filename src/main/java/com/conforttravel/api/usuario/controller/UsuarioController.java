@@ -1,9 +1,7 @@
 package com.conforttravel.api.usuario.controller;
 
 import com.conforttravel.api.shared.dto.PageResponse;
-import com.conforttravel.api.usuario.dto.UsuarioFilterRequest;
-import com.conforttravel.api.usuario.dto.UsuarioRequest;
-import com.conforttravel.api.usuario.dto.UsuarioResponse;
+import com.conforttravel.api.usuario.dto.*;
 import com.conforttravel.api.usuario.service.UsuarioService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -41,7 +39,7 @@ public class UsuarioController {
 
     @PostMapping
     public ResponseEntity<UsuarioResponse> crear(
-            @Valid @RequestBody UsuarioRequest request
+            @Valid @RequestBody UsuarioCreateRequest request
     ) {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -51,10 +49,30 @@ public class UsuarioController {
     @PutMapping("/{id}")
     public ResponseEntity<UsuarioResponse> actualizar(
             @PathVariable Long id,
-            @Valid @RequestBody UsuarioRequest request
+            @Valid @RequestBody UsuarioUpdateRequest request
     ) {
         return ResponseEntity.ok(
                 usuarioService.actualizar(id, request)
+        );
+    }
+
+    @PatchMapping("/{id}/password")
+    public ResponseEntity<UsuarioResponse> cambiarPassword(
+            @PathVariable Long id,
+            @Valid @RequestBody CambiarPasswordRequest request
+    ) {
+        return ResponseEntity.ok(
+                usuarioService.cambiarPassword(id, request)
+        );
+    }
+
+    @PatchMapping("/{id}/estado")
+    public ResponseEntity<UsuarioResponse> cambiarEstado(
+            @PathVariable Long id,
+            @Valid @RequestBody CambiarEstadoRequest request
+    ) {
+        return ResponseEntity.ok(
+                usuarioService.cambiarEstado(id, request)
         );
     }
 
