@@ -6,6 +6,7 @@ import com.conforttravel.api.cliente.repository.ClienteRepository;
 import com.conforttravel.api.shared.dto.PageResponse;
 import com.conforttravel.api.shared.exception.BusinessException;
 import com.conforttravel.api.shared.exception.ResourceNotFoundException;
+import com.conforttravel.api.usuario.entity.Rol;
 import com.conforttravel.api.usuario.entity.Usuario;
 import com.conforttravel.api.usuario.repository.UsuarioRepository;
 import com.conforttravel.api.venta.dto.VentaFilterRequest;
@@ -159,12 +160,26 @@ public class VentaServiceImpl implements VentaService {
     }
 
     private Usuario obtenerAgente(Long id) {
-        return usuarioRepository.findById(id)
+        Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() ->
                         new ResourceNotFoundException(
                                 "Usuario agente no encontrado con id: " + id
                         )
                 );
+
+        if (usuario.getRol() != Rol.AGENTE) {
+            throw new BusinessException(
+                    "El usuario asignado a la venta debe tener el rol de AGENTE"
+            );
+        }
+
+        if (!Boolean.TRUE.equals(usuario.getActivo())) {
+            throw new BusinessException(
+                    "El agente asignado a la venta debe encontrarse activo"
+            );
+        }
+
+        return usuario;
     }
 
     private void validarPrecios(VentaRequest request) {
