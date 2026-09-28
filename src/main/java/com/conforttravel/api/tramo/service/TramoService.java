@@ -13,6 +13,8 @@ public interface TramoService {
 
     List<TramoResponse> obtenerTodos();
 
+    List<TramoResponse> obtenerPorViaje(Long viajeId);
+
     TramoResponse actualizar(Long id, TramoRequest request);
 
     void eliminar(Long id);

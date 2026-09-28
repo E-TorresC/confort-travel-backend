@@ -32,6 +32,15 @@ public class ReservaController {
         );
     }
 
+    @GetMapping("/tramo/{tramoId}")
+    public ResponseEntity<ReservaResponse> obtenerPorTramo(
+            @PathVariable Long tramoId
+    ) {
+        return ResponseEntity.ok(
+                reservaService.obtenerPorTramo(tramoId)
+        );
+    }
+
     @PostMapping
     public ResponseEntity<ReservaResponse> crear(
             @Valid @RequestBody ReservaRequest request

@@ -38,6 +38,15 @@ public class VentaServicioController {
         );
     }
 
+    @GetMapping("/venta/{ventaId}")
+    public ResponseEntity<List<VentaServicioResponse>> obtenerPorVenta(
+            @PathVariable Long ventaId
+    ) {
+        return ResponseEntity.ok(
+                ventaServicioService.obtenerPorVenta(ventaId)
+        );
+    }
+
     @PostMapping
     public ResponseEntity<VentaServicioResponse> agregar(
             @Valid @RequestBody VentaServicioRequest request

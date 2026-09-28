@@ -13,6 +13,8 @@ public interface ReservaService {
 
     List<ReservaResponse> obtenerTodos();
 
+    ReservaResponse obtenerPorTramo(Long tramoId);
+
     ReservaResponse actualizar(Long id, ReservaRequest request);
 
     void eliminar(Long id);

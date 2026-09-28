@@ -52,7 +52,6 @@ public class TramoServiceImpl implements TramoService {
                         + guardado.getDestino()
         );
 
-        // Crear automáticamente el seguimiento de Check-in (Estado PENDIENTE)
         checkInService.crear(new CheckInRequest(guardado.getId()));
 
         return tramoMapper.toResponseDto(guardado);
@@ -66,6 +65,14 @@ public class TramoServiceImpl implements TramoService {
     @Override
     public List<TramoResponse> obtenerTodos() {
         return tramoRepository.findAll()
+                .stream()
+                .map(tramoMapper::toResponseDto)
+                .toList();
+    }
+
+    @Override
+    public List<TramoResponse> obtenerPorViaje(Long viajeId) {
+        return tramoRepository.findByViajeId(viajeId)
                 .stream()
                 .map(tramoMapper::toResponseDto)
                 .toList();

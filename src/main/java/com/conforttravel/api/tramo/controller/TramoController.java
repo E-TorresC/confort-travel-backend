@@ -32,6 +32,15 @@ public class TramoController {
         );
     }
 
+    @GetMapping("/viaje/{viajeId}")
+    public ResponseEntity<List<TramoResponse>> obtenerPorViaje(
+            @PathVariable Long viajeId
+    ) {
+        return ResponseEntity.ok(
+                tramoService.obtenerPorViaje(viajeId)
+        );
+    }
+
     @PostMapping
     public ResponseEntity<TramoResponse> crear(
             @Valid @RequestBody TramoRequest request

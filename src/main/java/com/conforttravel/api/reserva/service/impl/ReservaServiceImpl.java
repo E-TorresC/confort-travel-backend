@@ -65,6 +65,17 @@ public class ReservaServiceImpl implements ReservaService {
     }
 
     @Override
+    public ReservaResponse obtenerPorTramo(Long tramoId) {
+        Reserva reserva = reservaRepository.findByTramoId(tramoId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "No se encontró reserva para el tramo con id: " + tramoId
+                        )
+                );
+        return reservaMapper.toResponseDto(reserva);
+    }
+
+    @Override
     @Transactional
     public ReservaResponse actualizar(
             Long id,

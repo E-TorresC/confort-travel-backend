@@ -16,6 +16,8 @@ public interface VentaServicioService {
 
     List<VentaServicioResponse> obtenerTodos();
 
+    List<VentaServicioResponse> obtenerPorVenta(Long ventaId);
+
     void eliminar(
             Long ventaId,
             Long servicioAdicionalId

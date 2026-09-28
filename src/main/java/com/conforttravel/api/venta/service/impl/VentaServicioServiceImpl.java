@@ -23,8 +23,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class VentaServicioServiceImpl
-        implements VentaServicioService {
+public class VentaServicioServiceImpl implements VentaServicioService {
 
     private final VentaServicioRepository ventaServicioRepository;
     private final VentaRepository ventaRepository;
@@ -115,6 +114,14 @@ public class VentaServicioServiceImpl
     @Override
     public List<VentaServicioResponse> obtenerTodos() {
         return ventaServicioRepository.findAll()
+                .stream()
+                .map(ventaServicioMapper::toResponseDto)
+                .toList();
+    }
+
+    @Override
+    public List<VentaServicioResponse> obtenerPorVenta(Long ventaId) {
+        return ventaServicioRepository.findByVentaId(ventaId)
                 .stream()
                 .map(ventaServicioMapper::toResponseDto)
                 .toList();
