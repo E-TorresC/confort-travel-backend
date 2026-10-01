@@ -15,7 +15,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/servicios")
 @RequiredArgsConstructor
-@PreAuthorize("hasRole('ADMIN')")
+//@PreAuthorize("hasRole('ADMIN')")
 public class ServicioAdicionalController {
 
     private final ServicioAdicionalService servicioService;

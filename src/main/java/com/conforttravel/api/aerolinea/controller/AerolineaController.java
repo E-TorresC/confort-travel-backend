@@ -18,7 +18,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/aerolineas")
 @RequiredArgsConstructor
-@PreAuthorize("hasRole('ADMIN')")
+//@PreAuthorize("hasRole('ADMIN')")
 public class AerolineaController {
 
     private final AerolineaService aerolineaService;

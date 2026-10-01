@@ -3,6 +3,7 @@ package com.conforttravel.api.auth.security;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -27,29 +28,35 @@ public class SecurityConfig {
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
 
     @Bean
-    public SecurityFilterChain securityFilterChain(
-            HttpSecurity http
-    ) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
+        // 1. Agrupamos los endpoints operativos en un arreglo para mantener la configuración limpia (Clean Code)
+        String[] endpointsOperativos = {
+                "/api/clientes/**",
+                "/api/ventas/**",
+                "/api/venta-servicios/**",
+                "/api/viajes/**",
+                "/api/tramos/**",
+                "/api/reservas/**",
+                "/api/checkins/**",
+                "/api/notificaciones/**",
+                "/api/aerolineas/**",
+                "/api/servicios/**"
+        };
 
         http
                 .cors(Customizer.withDefaults())
                 .csrf(csrf -> csrf.disable())
 
                 .sessionManagement(session ->
-                        session.sessionCreationPolicy(
-                                SessionCreationPolicy.STATELESS
-                        )
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
 
                 .authorizeHttpRequests(auth -> auth
 
-                        // Autenticación
+                        // 2. Rutas Públicas (Autenticación, Swagger, Actuator)
                         .requestMatchers(
-                                "/api/auth/**"
-                        ).permitAll()
-
-                        // Documentación y Actuator (Solo health e info son públicos)
-                        .requestMatchers(
+                                "/api/auth/**",
                                 "/swagger-ui/**",
                                 "/swagger-ui.html",
                                 "/v3/api-docs/**",
@@ -58,53 +65,44 @@ public class SecurityConfig {
                                 "/actuator/info"
                         ).permitAll()
 
-                        // Resto de endpoints (incluyendo otros de actuator como env o metrics)
-                        .anyRequest()
-                        .authenticated()
+                        // 3. Mantenimiento del Sistema (Full access y GET exclusivos para ADMIN)
+                        .requestMatchers("/api/usuarios/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/auditoria/**").hasRole("ADMIN")
+
+                        // 4. Endpoints Operativos - Visualización (GET permitidos para ADMIN y AGENTE)
+                        .requestMatchers(HttpMethod.GET, endpointsOperativos).hasAnyRole("ADMIN", "AGENTE")
+
+                        // 5. Endpoints Operativos - Mutación (Restringidos SOLO para AGENTE)
+                        .requestMatchers(HttpMethod.POST, endpointsOperativos).hasRole("AGENTE")
+                        .requestMatchers(HttpMethod.PUT, endpointsOperativos).hasRole("AGENTE")
+                        .requestMatchers(HttpMethod.PATCH, endpointsOperativos).hasRole("AGENTE")
+                        .requestMatchers(HttpMethod.DELETE, endpointsOperativos).hasRole("AGENTE")
+
+                        // 6. Resto de endpoints (Ej. /api/dashboard, /api/reportes) accesibles por usuarios autenticados
+                        .anyRequest().authenticated()
                 )
 
                 .exceptionHandling(exception ->
                         exception
-                                .authenticationEntryPoint(
-                                        jwtAuthenticationEntryPoint
-                                )
-                                .accessDeniedHandler(
-                                        jwtAccessDeniedHandler
-                                )
+                                .authenticationEntryPoint(jwtAuthenticationEntryPoint)
+                                .accessDeniedHandler(jwtAccessDeniedHandler)
                 )
 
-                .authenticationProvider(
-                        authenticationProvider()
-                )
-
-                .addFilterBefore(
-                        jwtAuthenticationFilter,
-                        UsernamePasswordAuthenticationFilter.class
-                );
+                .authenticationProvider(authenticationProvider())
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
     @Bean
     public AuthenticationProvider authenticationProvider() {
-
-        DaoAuthenticationProvider provider =
-                new DaoAuthenticationProvider(
-                        userDetailsService
-                );
-
-        provider.setPasswordEncoder(
-                passwordEncoder()
-        );
-
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider(userDetailsService);
+        provider.setPasswordEncoder(passwordEncoder());
         return provider;
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(
-            AuthenticationConfiguration configuration
-    ) throws Exception {
-
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
         return configuration.getAuthenticationManager();
     }
 
