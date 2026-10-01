@@ -2,6 +2,7 @@ package com.conforttravel.api.tramo.dto;
 
 import com.conforttravel.api.tramo.entity.TipoTramo;
 import com.conforttravel.api.tramo.entity.TipoViaje;
+import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -24,8 +25,10 @@ public record TramoRequest(
         @Size(max = 150, message = "El destino no puede superar los 150 caracteres")
         String destino,
 
+        @FutureOrPresent(message = "La fecha y hora de salida no puede ser en el pasado")
         @NotNull(message = "La fecha/hora de salida es obligatoria")
         OffsetDateTime fechaHoraSalida,
+
 
         OffsetDateTime fechaHoraLlegada,
 
