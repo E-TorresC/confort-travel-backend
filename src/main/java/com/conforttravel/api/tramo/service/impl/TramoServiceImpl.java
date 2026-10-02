@@ -11,8 +11,8 @@ import com.conforttravel.api.tramo.entity.Tramo;
 import com.conforttravel.api.tramo.mapper.TramoMapper;
 import com.conforttravel.api.tramo.repository.TramoRepository;
 import com.conforttravel.api.tramo.service.TramoService;
-import com.conforttravel.api.viaje.entity.Viaje;
-import com.conforttravel.api.viaje.repository.ViajeRepository;
+import com.conforttravel.api.venta.entity.Venta;
+import com.conforttravel.api.venta.repository.VentaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,7 +25,7 @@ import java.util.List;
 public class TramoServiceImpl implements TramoService {
 
     private final TramoRepository tramoRepository;
-    private final ViajeRepository viajeRepository;
+    private final VentaRepository ventaRepository;
     private final TramoMapper tramoMapper;
     private final AuditLogService auditLogService;
     private final CheckInService checkInService;
@@ -35,10 +35,10 @@ public class TramoServiceImpl implements TramoService {
     public TramoResponse crear(TramoRequest request) {
         validarFechas(request);
 
-        Viaje viaje = obtenerViaje(request.viajeId());
+        Venta venta = obtenerVenta(request.ventaId());
 
         Tramo tramo = tramoMapper.toEntity(request);
-        tramo.setViaje(viaje);
+        tramo.setVenta(venta);
 
         Tramo guardado = tramoRepository.save(tramo);
 
@@ -46,14 +46,10 @@ public class TramoServiceImpl implements TramoService {
                 "CREAR",
                 "TRAMO",
                 guardado.getId(),
-                "Se creó el tramo desde "
-                        + guardado.getOrigen()
-                        + " hacia "
-                        + guardado.getDestino()
+                "Se creó el tramo desde " + guardado.getOrigen() + " hacia " + guardado.getDestino()
         );
 
         checkInService.crear(new CheckInRequest(guardado.getId()));
-
         return tramoMapper.toResponseDto(guardado);
     }
 
@@ -64,30 +60,21 @@ public class TramoServiceImpl implements TramoService {
 
     @Override
     public List<TramoResponse> obtenerTodos() {
-        return tramoRepository.findAll()
-                .stream()
-                .map(tramoMapper::toResponseDto)
-                .toList();
+        return tramoRepository.findAll().stream().map(tramoMapper::toResponseDto).toList();
     }
 
     @Override
-    public List<TramoResponse> obtenerPorViaje(Long viajeId) {
-        return tramoRepository.findByViajeId(viajeId)
-                .stream()
-                .map(tramoMapper::toResponseDto)
-                .toList();
+    public List<TramoResponse> obtenerPorVenta(Long ventaId) {
+        return tramoRepository.findByVentaId(ventaId).stream().map(tramoMapper::toResponseDto).toList();
     }
 
     @Override
     @Transactional
-    public TramoResponse actualizar(
-            Long id,
-            TramoRequest request
-    ) {
+    public TramoResponse actualizar(Long id, TramoRequest request) {
         validarFechas(request);
 
         Tramo tramo = obtenerEntidad(id);
-        Viaje viaje = obtenerViaje(request.viajeId());
+        Venta venta = obtenerVenta(request.ventaId());
 
         tramo.setTipoTramo(request.tipoTramo());
         tramo.setTipoViaje(request.tipoViaje());
@@ -95,7 +82,7 @@ public class TramoServiceImpl implements TramoService {
         tramo.setDestino(request.destino());
         tramo.setFechaHoraSalida(request.fechaHoraSalida());
         tramo.setFechaHoraLlegada(request.fechaHoraLlegada());
-        tramo.setViaje(viaje);
+        tramo.setVenta(venta);
 
         Tramo actualizado = tramoRepository.save(tramo);
 
@@ -103,10 +90,7 @@ public class TramoServiceImpl implements TramoService {
                 "ACTUALIZAR",
                 "TRAMO",
                 actualizado.getId(),
-                "Se actualizó el tramo desde "
-                        + actualizado.getOrigen()
-                        + " hacia "
-                        + actualizado.getDestino()
+                "Se actualizó el tramo desde " + actualizado.getOrigen() + " hacia " + actualizado.getDestino()
         );
 
         return tramoMapper.toResponseDto(actualizado);
@@ -121,42 +105,23 @@ public class TramoServiceImpl implements TramoService {
                 "ELIMINAR",
                 "TRAMO",
                 tramo.getId(),
-                "Se eliminó el tramo desde "
-                        + tramo.getOrigen()
-                        + " hacia "
-                        + tramo.getDestino()
+                "Se eliminó el tramo desde " + tramo.getOrigen() + " hacia " + tramo.getDestino()
         );
 
         tramoRepository.delete(tramo);
     }
 
     private Tramo obtenerEntidad(Long id) {
-        return tramoRepository.findById(id)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException(
-                                "Tramo no encontrado con id: " + id
-                        )
-                );
+        return tramoRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Tramo no encontrado con id: " + id));
     }
 
-    private Viaje obtenerViaje(Long id) {
-        return viajeRepository.findById(id)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException(
-                                "Viaje no encontrado con id: " + id
-                        )
-                );
+    private Venta obtenerVenta(Long id) {
+        return ventaRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Venta no encontrada con id: " + id));
     }
 
     private void validarFechas(TramoRequest request) {
-        if (request.fechaHoraLlegada() != null
-                && !request.fechaHoraLlegada()
-                .isAfter(request.fechaHoraSalida())) {
-
-            throw new BusinessException(
-                    "La fecha/hora de llegada debe ser posterior "
-                            + "a la fecha/hora de salida"
-            );
+        if (request.fechaHoraLlegada() != null && !request.fechaHoraLlegada().isAfter(request.fechaHoraSalida())) {
+            throw new BusinessException("La fecha/hora de llegada debe ser posterior a la fecha/hora de salida");
         }
     }
 }

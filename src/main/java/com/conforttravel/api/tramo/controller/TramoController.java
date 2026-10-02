@@ -32,12 +32,12 @@ public class TramoController {
         );
     }
 
-    @GetMapping("/viaje/{viajeId}")
-    public ResponseEntity<List<TramoResponse>> obtenerPorViaje(
-            @PathVariable Long viajeId
+    @GetMapping("/venta/{ventaId}")
+    public ResponseEntity<List<TramoResponse>> obtenerPorVenta(
+            @PathVariable Long ventaId
     ) {
         return ResponseEntity.ok(
-                tramoService.obtenerPorViaje(viajeId)
+                tramoService.obtenerPorVenta(ventaId)
         );
     }
 

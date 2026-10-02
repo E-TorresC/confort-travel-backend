@@ -90,7 +90,7 @@ class VentaServiceImplTest {
         when(ventaMapper.toResponseDto(ventaGuardada)).thenReturn(
                 new VentaResponse(10L, request.fechaCompra(), request.precioInicial(),
                         request.precioFinal(), new BigDecimal("150.00"),
-                        "Sin observaciones", 1, 0, 1L, 1L, null, null, null, 0L)
+                        "Sin observaciones", 1, 0, 1L, 1L, null, null, 0L)
         );
 
         // Act

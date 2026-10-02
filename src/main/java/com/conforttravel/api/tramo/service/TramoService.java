@@ -13,7 +13,7 @@ public interface TramoService {
 
     List<TramoResponse> obtenerTodos();
 
-    List<TramoResponse> obtenerPorViaje(Long viajeId);
+    List<TramoResponse> obtenerPorVenta(Long ventaId);
 
     TramoResponse actualizar(Long id, TramoRequest request);
 

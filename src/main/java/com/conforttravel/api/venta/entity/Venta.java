@@ -1,15 +1,16 @@
 package com.conforttravel.api.venta.entity;
 
 import com.conforttravel.api.cliente.entity.Cliente;
+import com.conforttravel.api.tramo.entity.Tramo;
 import com.conforttravel.api.usuario.entity.Usuario;
-import com.conforttravel.api.viaje.entity.Viaje;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "venta")
@@ -71,11 +72,13 @@ public class Venta {
     )
     private Usuario agente;
 
-    @OneToOne(
+    @OneToMany(
             mappedBy = "venta",
-            fetch = FetchType.LAZY
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
     )
-    private Viaje viaje;
+    @Builder.Default
+    private List<Tramo> tramos = new ArrayList<>();
 
     @Column(name = "created_at", nullable = false)
     private OffsetDateTime createdAt;

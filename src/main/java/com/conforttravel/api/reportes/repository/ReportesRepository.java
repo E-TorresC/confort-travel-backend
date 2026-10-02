@@ -139,10 +139,8 @@ public interface ReportesRepository extends JpaRepository<
                             v.id AS venta_id,
                             a.id AS aerolinea_id
                         FROM venta v
-                        INNER JOIN viaje vi
-                            ON vi.venta_id = v.id
                         INNER JOIN tramo t
-                            ON t.viaje_id = vi.id
+                            ON t.venta_id = v.id
                         INNER JOIN reserva r
                             ON r.tramo_id = t.id
                         INNER JOIN aerolinea a

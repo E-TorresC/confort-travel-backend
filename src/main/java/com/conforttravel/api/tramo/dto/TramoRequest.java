@@ -29,10 +29,9 @@ public record TramoRequest(
         @NotNull(message = "La fecha/hora de salida es obligatoria")
         OffsetDateTime fechaHoraSalida,
 
-
         OffsetDateTime fechaHoraLlegada,
 
-        @NotNull(message = "El viaje es obligatorio")
-        Long viajeId
+        @NotNull(message = "La venta es obligatoria")
+        Long ventaId
 ) {
 }

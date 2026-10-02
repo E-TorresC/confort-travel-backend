@@ -70,7 +70,7 @@ public class CheckInNotificationServiceImpl
     private void crearNotificacion(CheckIn checkIn) {
 
         // Navegamos por el modelo de dominio para obtener el agente que realizó la venta
-        Usuario agenteResponsable = checkIn.getTramo().getViaje().getVenta().getAgente();
+        Usuario agenteResponsable = checkIn.getTramo().getVenta().getAgente();
 
         Notificacion notificacion = Notificacion.builder()
                 .tipo(TipoNotificacion.CHECK_IN_DISPONIBLE)

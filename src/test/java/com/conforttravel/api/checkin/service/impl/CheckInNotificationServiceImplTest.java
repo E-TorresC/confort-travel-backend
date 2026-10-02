@@ -8,7 +8,6 @@ import com.conforttravel.api.notificacion.repository.NotificacionRepository;
 import com.conforttravel.api.tramo.entity.Tramo;
 import com.conforttravel.api.usuario.entity.Usuario;
 import com.conforttravel.api.venta.entity.Venta;
-import com.conforttravel.api.viaje.entity.Viaje;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -54,18 +53,9 @@ class CheckInNotificationServiceImplTest {
     @Test
     void procesarCheckInsDisponibles_ConPendientes_NotificaAlAgenteResponsableYActualizaEstado() {
         // Arrange
-        Usuario agente = new Usuario();
-        agente.setId(42L);
-
-        Venta venta = new Venta();
-        venta.setAgente(agente);
-
-        Viaje viaje = new Viaje();
-        viaje.setVenta(venta);
-
-        Tramo tramo = new Tramo();
-        tramo.setId(100L);
-        tramo.setViaje(viaje);
+        Usuario agente = new Usuario(); agente.setId(42L);
+        Venta venta = new Venta(); venta.setAgente(agente);
+        Tramo tramo = new Tramo(); tramo.setId(100L); tramo.setVenta(venta);
 
         CheckIn checkInPendiente = new CheckIn();
         checkInPendiente.setId(1L);
@@ -124,12 +114,9 @@ class CheckInNotificationServiceImplTest {
         Venta venta = new Venta();
         venta.setAgente(agente);
 
-        Viaje viaje = new Viaje();
-        viaje.setVenta(venta);
-
         Tramo tramo = new Tramo();
         tramo.setId(tramoId);
-        tramo.setViaje(viaje);
+        tramo.setVenta(venta);
 
         CheckIn checkIn = new CheckIn();
         checkIn.setId(checkInId);

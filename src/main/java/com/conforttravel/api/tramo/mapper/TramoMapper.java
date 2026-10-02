@@ -11,12 +11,12 @@ import org.mapstruct.Mapping;
 public interface TramoMapper {
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "viaje", ignore = true)
+    @Mapping(target = "venta", ignore = true)
     @Mapping(target = "reserva", ignore = true)
     @Mapping(target = "checkIn", ignore = true)
     Tramo toEntity(TramoRequest dto);
 
-    @Mapping(target = "viajeId", source = "viaje.id")
+    @Mapping(target = "ventaId", source = "venta.id")
     @Mapping(target = "reservaId", source = "reserva.id")
     @Mapping(target = "checkInId", source = "checkIn.id")
     TramoResponse toResponseDto(Tramo entity);

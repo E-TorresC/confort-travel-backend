@@ -2,7 +2,7 @@ package com.conforttravel.api.tramo.entity;
 
 import com.conforttravel.api.checkin.entity.CheckIn;
 import com.conforttravel.api.reserva.entity.Reserva;
-import com.conforttravel.api.viaje.entity.Viaje;
+import com.conforttravel.api.venta.entity.Venta;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -46,11 +46,11 @@ public class Tramo {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(
-            name = "viaje_id",
+            name = "venta_id",
             nullable = false,
-            foreignKey = @ForeignKey(name = "fk_tramo_viaje")
+            foreignKey = @ForeignKey(name = "fk_tramo_venta")
     )
-    private Viaje viaje;
+    private Venta venta;
 
     @OneToOne(
             mappedBy = "tramo",

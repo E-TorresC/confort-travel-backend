@@ -16,11 +16,11 @@ public interface VentaMapper {
     @Mapping(target = "version", ignore = true)
     @Mapping(target = "cliente", ignore = true)
     @Mapping(target = "agente", ignore = true)
-    @Mapping(target = "viaje", ignore = true)
+    @Mapping(target = "tramos", ignore = true)   // <-- reemplaza a "viaje"
     Venta toEntity(VentaRequest dto);
 
     @Mapping(target = "clienteId", source = "cliente.id")
     @Mapping(target = "agenteId", source = "agente.id")
-    @Mapping(target = "viajeId", source = "viaje.id")
+        // Ya NO mapeamos viajeId porque ese campo ya no existe en VentaResponse
     VentaResponse toResponseDto(Venta entity);
 }

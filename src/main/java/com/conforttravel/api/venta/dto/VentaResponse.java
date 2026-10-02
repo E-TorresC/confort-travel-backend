@@ -26,8 +26,6 @@ public record VentaResponse(
 
         Long agenteId,
 
-        Long viajeId,
-
         OffsetDateTime createdAt,
 
         OffsetDateTime updatedAt,
