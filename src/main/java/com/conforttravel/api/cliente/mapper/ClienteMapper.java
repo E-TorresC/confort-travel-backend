@@ -11,6 +11,7 @@ import org.mapstruct.Mapping;
 public interface ClienteMapper {
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "codigo", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     Cliente toEntity(ClienteRequest dto);

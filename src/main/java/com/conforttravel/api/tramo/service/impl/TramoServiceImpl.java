@@ -5,6 +5,7 @@ import com.conforttravel.api.checkin.dto.CheckInRequest;
 import com.conforttravel.api.checkin.service.CheckInService;
 import com.conforttravel.api.shared.exception.BusinessException;
 import com.conforttravel.api.shared.exception.ResourceNotFoundException;
+import com.conforttravel.api.shared.util.GeneradorCodigoUtil;
 import com.conforttravel.api.tramo.dto.TramoRequest;
 import com.conforttravel.api.tramo.dto.TramoResponse;
 import com.conforttravel.api.tramo.entity.Tramo;
@@ -29,6 +30,7 @@ public class TramoServiceImpl implements TramoService {
     private final TramoMapper tramoMapper;
     private final AuditLogService auditLogService;
     private final CheckInService checkInService;
+    private final GeneradorCodigoUtil generadorCodigoUtil;
 
     @Override
     @Transactional
@@ -39,6 +41,11 @@ public class TramoServiceImpl implements TramoService {
 
         Tramo tramo = tramoMapper.toEntity(request);
         tramo.setVenta(venta);
+
+        String ultimoCodigo = tramoRepository.findTopByOrderByIdDesc()
+                .map(Tramo::getCodigo)
+                .orElse(null);
+        tramo.setCodigo(generadorCodigoUtil.generarSiguiente("TRM", ultimoCodigo));
 
         Tramo guardado = tramoRepository.save(tramo);
 

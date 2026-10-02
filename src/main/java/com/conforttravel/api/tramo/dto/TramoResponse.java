@@ -6,7 +6,9 @@ import com.conforttravel.api.tramo.entity.TipoViaje;
 import java.time.OffsetDateTime;
 
 public record TramoResponse(
+
         Long id,
+        String codigo,
         TipoTramo tipoTramo,
         TipoViaje tipoViaje,
         String origen,

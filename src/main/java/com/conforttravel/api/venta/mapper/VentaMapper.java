@@ -11,16 +11,16 @@ import org.mapstruct.Mapping;
 public interface VentaMapper {
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "codigo", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "version", ignore = true)
     @Mapping(target = "cliente", ignore = true)
     @Mapping(target = "agente", ignore = true)
-    @Mapping(target = "tramos", ignore = true)   // <-- reemplaza a "viaje"
+    @Mapping(target = "tramos", ignore = true)
     Venta toEntity(VentaRequest dto);
 
     @Mapping(target = "clienteId", source = "cliente.id")
     @Mapping(target = "agenteId", source = "agente.id")
-        // Ya NO mapeamos viajeId porque ese campo ya no existe en VentaResponse
     VentaResponse toResponseDto(Venta entity);
 }

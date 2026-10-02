@@ -6,15 +6,10 @@ import java.time.OffsetDateTime;
 public record AerolineaResponse(
 
         Long id,
-
-        String nombre,
-
         String codigo,
-
+        String nombre,
         Boolean activo,
-
         OffsetDateTime createdAt,
-
         OffsetDateTime updatedAt
 ) {
 }

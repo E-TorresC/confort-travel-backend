@@ -5,15 +5,11 @@ import java.time.OffsetDateTime;
 public record ClienteResponse(
 
         Long id,
-
+        String codigo,
         String nombres,
-
         String apellidos,
-
         String telefono,
-
         OffsetDateTime createdAt,
-
         OffsetDateTime  updatedAt
 ) {
 }

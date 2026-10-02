@@ -6,6 +6,7 @@ import com.conforttravel.api.cliente.repository.ClienteRepository;
 import com.conforttravel.api.shared.dto.PageResponse;
 import com.conforttravel.api.shared.exception.BusinessException;
 import com.conforttravel.api.shared.exception.ResourceNotFoundException;
+import com.conforttravel.api.shared.util.GeneradorCodigoUtil;
 import com.conforttravel.api.usuario.entity.Rol;
 import com.conforttravel.api.usuario.entity.Usuario;
 import com.conforttravel.api.usuario.repository.UsuarioRepository;
@@ -37,6 +38,7 @@ public class VentaServiceImpl implements VentaService {
     private final VentaMapper ventaMapper;
     private final VentaSpecificationBuilder ventaSpecificationBuilder;
     private final AuditLogService auditLogService;
+    private final GeneradorCodigoUtil generadorCodigoUtil;
 
     @Override
     @Transactional
@@ -50,6 +52,11 @@ public class VentaServiceImpl implements VentaService {
 
         venta.setCliente(cliente);
         venta.setAgente(agente);
+
+        String ultimoCodigo = ventaRepository.findTopByOrderByIdDesc()
+                .map(Venta::getCodigo)
+                .orElse(null);
+        venta.setCodigo(generadorCodigoUtil.generarSiguiente("VNT", ultimoCodigo));
 
         Venta guardada = ventaRepository.save(venta);
 

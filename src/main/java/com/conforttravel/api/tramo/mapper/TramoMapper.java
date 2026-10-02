@@ -11,6 +11,7 @@ import org.mapstruct.Mapping;
 public interface TramoMapper {
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "codigo", ignore = true)
     @Mapping(target = "venta", ignore = true)
     @Mapping(target = "reserva", ignore = true)
     @Mapping(target = "checkIn", ignore = true)

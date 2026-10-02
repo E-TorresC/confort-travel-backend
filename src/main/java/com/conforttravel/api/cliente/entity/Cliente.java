@@ -20,6 +20,9 @@ public class Cliente {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "codigo", unique = true, updatable = false, length = 20)
+    private String codigo;
+
     @Column(nullable = false, length = 150)
     private String nombres;
 

@@ -10,6 +10,7 @@ import com.conforttravel.api.cliente.repository.ClienteRepository;
 import com.conforttravel.api.cliente.service.ClienteService;
 import com.conforttravel.api.shared.dto.PageResponse;
 import com.conforttravel.api.shared.exception.ResourceNotFoundException;
+import com.conforttravel.api.shared.util.GeneradorCodigoUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -28,11 +29,17 @@ public class ClienteServiceImpl implements ClienteService {
     private final ClienteMapper clienteMapper;
     private final ClienteSpecificationBuilder clienteSpecificationBuilder;
     private final AuditLogService auditLogService;
+    private final GeneradorCodigoUtil generadorCodigoUtil;
 
     @Override
     @Transactional
     public ClienteResponse crear(ClienteRequest request) {
         Cliente cliente = clienteMapper.toEntity(request);
+
+        String ultimoCodigo = clienteRepository.findTopByOrderByIdDesc()
+                .map(Cliente::getCodigo)
+                .orElse(null);
+        cliente.setCodigo(generadorCodigoUtil.generarSiguiente("CLI", ultimoCodigo));
 
         Cliente guardado = clienteRepository.save(cliente);
 

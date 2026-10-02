@@ -21,6 +21,9 @@ public class Tramo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "codigo", unique = true, updatable = false, length = 20)
+    private String codigo;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "tipo_tramo", nullable = false, length = 20)
     private TipoTramo tipoTramo;

@@ -11,6 +11,7 @@ import com.conforttravel.api.aerolinea.specification.AerolineaSpecificationBuild
 import com.conforttravel.api.auditoria.service.AuditLogService;
 import com.conforttravel.api.shared.dto.PageResponse;
 import com.conforttravel.api.shared.exception.ResourceNotFoundException;
+import com.conforttravel.api.shared.util.GeneradorCodigoUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -27,11 +28,17 @@ public class AerolineaServiceImpl implements AerolineaService {
     private final AerolineaMapper aerolineaMapper;
     private final AerolineaSpecificationBuilder aerolineaSpecificationBuilder;
     private final AuditLogService auditLogService;
+    private final GeneradorCodigoUtil generadorCodigoUtil;
 
     @Override
     @Transactional
     public AerolineaResponse crear(AerolineaRequest request) {
         Aerolinea aerolinea = aerolineaMapper.toEntity(request);
+
+        String ultimoCodigo = aerolineaRepository.findTopByOrderByIdDesc()
+                .map(Aerolinea::getCodigo)
+                .orElse(null);
+        aerolinea.setCodigo(generadorCodigoUtil.generarSiguiente("AER", ultimoCodigo));
 
         if (aerolinea.getActivo() == null) {
             aerolinea.setActivo(true);

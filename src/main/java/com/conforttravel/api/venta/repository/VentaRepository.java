@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 
 public interface VentaRepository extends JpaRepository<Venta, Long>, JpaSpecificationExecutor<Venta> {
 
@@ -14,4 +15,6 @@ public interface VentaRepository extends JpaRepository<Venta, Long>, JpaSpecific
 
     @Query("SELECT SUM(v.precioFinal - v.precioInicial) FROM Venta v")
     BigDecimal sumGananciaAcumulada();
+
+    Optional<Venta> findTopByOrderByIdDesc();
 }

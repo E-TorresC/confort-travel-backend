@@ -1,6 +1,11 @@
 spring:
   application:
     name: confort-travel-backend
+  jackson:
+    # Fuerza a que todas las fechas se serialicen en UTC (con sufijo Z)
+    time-zone: UTC
+    # Opcional: Para que las fechas se vean bonitas y no como arreglos de números
+
 
 server:
   port: 8080
