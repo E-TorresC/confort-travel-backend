@@ -8,6 +8,7 @@ import com.conforttravel.api.shared.exception.ResourceNotFoundException;
 import com.conforttravel.api.shared.util.GeneradorCodigoUtil;
 import com.conforttravel.api.tramo.dto.TramoRequest;
 import com.conforttravel.api.tramo.dto.TramoResponse;
+import com.conforttravel.api.tramo.entity.TipoTramo;
 import com.conforttravel.api.tramo.entity.Tramo;
 import com.conforttravel.api.tramo.mapper.TramoMapper;
 import com.conforttravel.api.tramo.repository.TramoRepository;
@@ -36,6 +37,7 @@ public class TramoServiceImpl implements TramoService {
     @Transactional
     public TramoResponse crear(TramoRequest request) {
         validarFechas(request);
+        validarFechasIdaRetorno(request, null);
 
         Venta venta = obtenerVenta(request.ventaId());
 
@@ -79,6 +81,7 @@ public class TramoServiceImpl implements TramoService {
     @Transactional
     public TramoResponse actualizar(Long id, TramoRequest request) {
         validarFechas(request);
+        validarFechasIdaRetorno(request, id);
 
         Tramo tramo = obtenerEntidad(id);
         Venta venta = obtenerVenta(request.ventaId());
@@ -129,6 +132,30 @@ public class TramoServiceImpl implements TramoService {
     private void validarFechas(TramoRequest request) {
         if (request.fechaHoraLlegada() != null && !request.fechaHoraLlegada().isAfter(request.fechaHoraSalida())) {
             throw new BusinessException("La fecha/hora de llegada debe ser posterior a la fecha/hora de salida");
+        }
+    }
+
+    private void validarFechasIdaRetorno(TramoRequest request, Long tramoId) {
+        List<Tramo> tramosVenta = tramoRepository.findByVentaId(request.ventaId());
+
+        if (request.tipoTramo() == TipoTramo.RETORNO) {
+            tramosVenta.stream()
+                    .filter(t -> t.getTipoTramo() == TipoTramo.IDA && !t.getId().equals(tramoId))
+                    .findFirst()
+                    .ifPresent(ida -> {
+                        if (request.fechaHoraSalida().isBefore(ida.getFechaHoraSalida())) {
+                            throw new BusinessException("La fecha de salida del tramo de RETORNO no puede ser anterior a la del tramo de IDA.");
+                        }
+                    });
+        } else if (request.tipoTramo() == TipoTramo.IDA) {
+            tramosVenta.stream()
+                    .filter(t -> t.getTipoTramo() == TipoTramo.RETORNO && !t.getId().equals(tramoId))
+                    .findFirst()
+                    .ifPresent(retorno -> {
+                        if (request.fechaHoraSalida().isAfter(retorno.getFechaHoraSalida())) {
+                            throw new BusinessException("La fecha de salida del tramo de IDA no puede ser posterior a la del tramo de RETORNO.");
+                        }
+                    });
         }
     }
 }
