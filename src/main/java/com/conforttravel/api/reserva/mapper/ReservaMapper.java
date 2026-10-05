@@ -16,6 +16,10 @@ public interface ReservaMapper {
     Reserva toEntity(ReservaRequest dto);
 
     @Mapping(target = "tramoId", source = "tramo.id")
+    @Mapping(target = "tramoCodigo", source = "tramo.codigo")
     @Mapping(target = "aerolineaId", source = "aerolinea.id")
+    @Mapping(target = "aerolineaNombre", source = "aerolinea.nombre")
+    @Mapping(target = "clienteNombres", source = "tramo.venta.cliente.nombres")
+    @Mapping(target = "clienteApellidos", source = "tramo.venta.cliente.apellidos")
     ReservaResponse toResponseDto(Reserva entity);
 }
