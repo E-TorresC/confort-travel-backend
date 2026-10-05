@@ -126,9 +126,7 @@ public class CheckInServiceImpl implements CheckInService {
             EstadoCheckIn estado,
             Pageable pageable
     ) {
-        Page<CheckIn> page = (estado != null)
-                ? checkInRepository.findByEstado(estado, pageable)
-                : checkInRepository.findAll(pageable);
+        Page<CheckIn> page = checkInRepository.findByEstadoConPrioridad(estado, pageable);
 
         return PageResponse.from(
                 page.map(checkInMapper::toResponseDto)

@@ -14,6 +14,7 @@ public record CheckInResponse(
         Long tramoId,
         String tramoCodigo,
         String clienteNombres,
-        String clienteApellidos
+        String clienteApellidos,
+        String reservaCodigo
 ) {
 }
