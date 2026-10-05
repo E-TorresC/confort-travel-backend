@@ -60,23 +60,27 @@ public class CheckInNotificationServiceImpl
             checkInRepository.save(checkIn);
 
             log.info(
-                    "Check-in {} notificado automáticamente al agente responsable. Tramo: {}",
+                    "Check-in {} notificado automáticamente al agente responsable. Cliente: {} {}",
                     checkIn.getId(),
-                    checkIn.getTramo().getId()
+                    checkIn.getTramo().getVenta().getCliente().getNombres(),
+                    checkIn.getTramo().getVenta().getCliente().getApellidos()
             );
         }
     }
 
     private void crearNotificacion(CheckIn checkIn) {
 
-        // Navegamos por el modelo de dominio para obtener el agente que realizó la venta
         Usuario agenteResponsable = checkIn.getTramo().getVenta().getAgente();
+        String nombresCliente = checkIn.getTramo().getVenta().getCliente().getNombres();
+        String apellidosCliente = checkIn.getTramo().getVenta().getCliente().getApellidos();
 
         Notificacion notificacion = Notificacion.builder()
                 .tipo(TipoNotificacion.CHECK_IN_DISPONIBLE)
                 .mensaje(
-                        "El check-in del tramo "
-                                + checkIn.getTramo().getId()
+                        "El check-in del cliente "
+                                + nombresCliente
+                                + " "
+                                + apellidosCliente
                                 + " ya se encuentra disponible."
                 )
                 .fechaCreacion(OffsetDateTime.now(ZoneOffset.UTC))
