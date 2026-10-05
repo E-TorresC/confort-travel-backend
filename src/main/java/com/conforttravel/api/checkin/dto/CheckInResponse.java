@@ -7,15 +7,13 @@ import java.time.OffsetDateTime;
 public record CheckInResponse(
 
         Long id,
-
         EstadoCheckIn estado,
-
         OffsetDateTime fechaDisponible,
-
         OffsetDateTime fechaNotificacion,
-
         OffsetDateTime fechaAtencion,
-
-        Long tramoId
+        Long tramoId,
+        String tramoCodigo,
+        String clienteNombres,
+        String clienteApellidos
 ) {
 }

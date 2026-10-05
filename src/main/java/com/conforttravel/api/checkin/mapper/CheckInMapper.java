@@ -19,5 +19,8 @@ public interface CheckInMapper {
     CheckIn toEntity(CheckInRequest dto);
 
     @Mapping(target = "tramoId", source = "tramo.id")
+    @Mapping(target = "tramoCodigo", source = "tramo.codigo")
+    @Mapping(target = "clienteNombres", source = "tramo.venta.cliente.nombres")
+    @Mapping(target = "clienteApellidos", source = "tramo.venta.cliente.apellidos")
     CheckInResponse toResponseDto(CheckIn entity);
 }
