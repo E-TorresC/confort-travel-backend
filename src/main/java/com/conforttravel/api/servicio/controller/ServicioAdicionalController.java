@@ -1,10 +1,13 @@
 package com.conforttravel.api.servicio.controller;
 
+import com.conforttravel.api.servicio.dto.ServicioAdicionalFilterRequest;
 import com.conforttravel.api.servicio.dto.ServicioAdicionalRequest;
 import com.conforttravel.api.servicio.dto.ServicioAdicionalResponse;
 import com.conforttravel.api.servicio.service.ServicioAdicionalService;
+import com.conforttravel.api.shared.dto.PageResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -61,5 +64,15 @@ public class ServicioAdicionalController {
     ) {
         servicioService.eliminar(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/page")
+    public ResponseEntity<PageResponse<ServicioAdicionalResponse>> buscar(
+            @RequestParam(required = false) String nombre,
+            @RequestParam(required = false) Boolean activo,
+            Pageable pageable
+    ) {
+        ServicioAdicionalFilterRequest filter = new ServicioAdicionalFilterRequest(nombre, activo);
+        return ResponseEntity.ok(servicioService.buscar(filter, pageable));
     }
 }

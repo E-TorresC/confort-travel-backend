@@ -1,14 +1,18 @@
 package com.conforttravel.api.servicio.service.impl;
 
 import com.conforttravel.api.auditoria.service.AuditLogService;
+import com.conforttravel.api.servicio.dto.ServicioAdicionalFilterRequest;
 import com.conforttravel.api.servicio.dto.ServicioAdicionalRequest;
 import com.conforttravel.api.servicio.dto.ServicioAdicionalResponse;
 import com.conforttravel.api.servicio.entity.ServicioAdicional;
 import com.conforttravel.api.servicio.mapper.ServicioAdicionalMapper;
 import com.conforttravel.api.servicio.repository.ServicioAdicionalRepository;
 import com.conforttravel.api.servicio.service.ServicioAdicionalService;
+import com.conforttravel.api.servicio.specification.ServicioAdicionalSpecificationBuilder;
+import com.conforttravel.api.shared.dto.PageResponse;
 import com.conforttravel.api.shared.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +27,7 @@ public class ServicioAdicionalServiceImpl
     private final ServicioAdicionalRepository servicioRepository;
     private final ServicioAdicionalMapper servicioMapper;
     private final AuditLogService auditLogService;
+    private final ServicioAdicionalSpecificationBuilder specificationBuilder;
 
     @Override
     @Transactional
@@ -102,6 +107,14 @@ public class ServicioAdicionalServiceImpl
         );
 
         servicioRepository.delete(servicio);
+    }
+
+    @Override
+    public PageResponse<ServicioAdicionalResponse> buscar(ServicioAdicionalFilterRequest filter, Pageable pageable) {
+        return PageResponse.from(
+                servicioRepository.findAll(specificationBuilder.build(filter), pageable)
+                        .map(servicioMapper::toResponseDto)
+        );
     }
 
     private ServicioAdicional obtenerEntidad(Long id) {
