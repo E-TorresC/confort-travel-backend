@@ -17,6 +17,8 @@ public record TramoResponse(
         OffsetDateTime fechaHoraLlegada,
         Long ventaId,
         Long reservaId,
-        Long checkInId
+        Long checkInId,
+        String clienteNombres,
+        String clienteApellidos
 ) {
 }

@@ -20,5 +20,7 @@ public interface TramoMapper {
     @Mapping(target = "ventaId", source = "venta.id")
     @Mapping(target = "reservaId", source = "reserva.id")
     @Mapping(target = "checkInId", source = "checkIn.id")
+    @Mapping(target = "clienteNombres", source = "venta.cliente.nombres")
+    @Mapping(target = "clienteApellidos", source = "venta.cliente.apellidos")
     TramoResponse toResponseDto(Tramo entity);
 }
