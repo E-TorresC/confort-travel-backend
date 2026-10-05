@@ -1,7 +1,6 @@
 package com.conforttravel.api.venta.dto;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 
 public record VentaResponse(
@@ -16,6 +15,8 @@ public record VentaResponse(
         Integer adultos,
         Integer infantes,
         Long clienteId,
+        String clienteNombres,
+        String clienteApellidos,
         Long agenteId,
         OffsetDateTime createdAt,
         OffsetDateTime updatedAt,

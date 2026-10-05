@@ -21,6 +21,8 @@ public interface VentaMapper {
     Venta toEntity(VentaRequest dto);
 
     @Mapping(target = "clienteId", source = "cliente.id")
+    @Mapping(target = "clienteNombres", source = "cliente.nombres")
+    @Mapping(target = "clienteApellidos", source = "cliente.apellidos")
     @Mapping(target = "agenteId", source = "agente.id")
     VentaResponse toResponseDto(Venta entity);
 }
